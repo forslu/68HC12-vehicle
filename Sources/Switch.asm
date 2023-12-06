@@ -1,22 +1,21 @@
-	XDEF	SlowFlag, FastFlag, Swich
-	XREF	__SEG_END_SSTACK
+	XDEF	SlowTFlag, FastTFlag, TurnChk
+	XREF	TurnFlag, SlowFlag, FastFlag , port_t
 	
 	
 	
 My_Constant:    section
-port_t:       equ $240
-port_t_ddr:   equ $242
+
 
 
 
 My_Var:    section
-SlowFlag  ds.b  1
-FastFlag  ds.b  1
+SlowTFlag  ds.b  1
+FastTFlag  ds.b  1
 
 My_Code:   section
               
-Swich:       
-               movb #$FF, port_t_ddr
+TurnChk:         brclr TurnFlag, #1, return
+               
                ldaa port_t	        ;load value from port_t into acc A
                anda #3
                
@@ -26,13 +25,17 @@ Swich:
                cmpa #3              ;disabled if 11
                beq  return
                
-               cmpa #2
+               cmpa #2                ;fast turn if 10
                beq  Fastturn
 
-SlowTurn:      movb #1, SlowFlag
+SlowTurn:      brclr SlowFlag, #1,return   ;fall into slowturn, branch if slowflag is cleared
+               movb #1, SlowTFlag         ;if slowflag is set, set slowturnflag
+               clr  TurnFlag                  ;clear turn flag
                bra return
 
-Fastturn:      movb #1, FastFlag         
+Fastturn:      brclr FastFlag, #1, return     ;branched to fasturn,leave if fastflag is cleared
+               movb #1, FastTFlag             ;if set, set the fastturnflag
+               clr  TurnFlag         
                bra return
       
 return:        rts

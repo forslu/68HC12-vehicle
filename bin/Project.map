@@ -24,7 +24,6 @@ RTI.asm.o                               Model: SMALL,         Lang: Assembler
 IRQ.asm.o                               Model: SMALL,         Lang: Assembler
 ODOCount.asm.o                          Model: SMALL,         Lang: Assembler
 Switch.asm.o                            Model: SMALL,         Lang: Assembler
-stepper.asm.o                           Model: SMALL,         Lang: Assembler
 
 *********************************************************************************************
 STARTUP SECTION
@@ -35,8 +34,8 @@ Entry point: 0xC000 (_Startup)
 SECTION-ALLOCATION SECTION
 Section Name                    Size  Type     From       To       Segment
 ---------------------------------------------------------------------------------------------
-.init                            309     R     0xC000     0xC134   ROM_C000
-NON_BANKED                       267     R     0xC135     0xC23F   ROM_C000
+.init                            381     R     0xC000     0xC17C   ROM_C000
+NON_BANKED                       267     R     0xC17D     0xC287   ROM_C000
 .stack                           256   R/W      0x400      0x4FF   RAM
 .abs_section_8                     1   N/I        0x8        0x8   .absSeg0
 .abs_section_9                     1   N/I        0x9        0x9   .absSeg1
@@ -312,23 +311,22 @@ NON_BANKED                       267     R     0xC135     0xC23F   ROM_C000
 .abs_section_27c                   2   N/I      0x27C      0x27D   .absSeg271
 .abs_section_27e                   2   N/I      0x27E      0x27F   .absSeg272
 .bss                               2   R/W      0x500      0x501   RAM
-my_constant                      346     R     0xC240     0xC399   ROM_C000
-MyCode                           438     R     0xC39A     0xC54F   ROM_C000
+my_constant                      479     R     0xC288     0xC466   ROM_C000
+MyCode                           352     R     0xC467     0xC5C6   ROM_C000
 my_variable                      131   R/W      0x502      0x584   RAM
 .common                            2   R/W      0x585      0x586   RAM
-MY_EXTENDED_RAM                   21     R     0xC550     0xC564   ROM_C000
+MY_EXTENDED_RAM                   21     R     0xC5C7     0xC5DB   ROM_C000
 vars                               3   R/W      0x587      0x589   RAM
-code                              41     R     0xC565     0xC58D   ROM_C000
-mycode                           131     R     0xC58E     0xC610   ROM_C000
+code                              46     R     0xC5DC     0xC609   ROM_C000
+mycode                           367     R     0xC60A     0xC778   ROM_C000
 myvar                             12   R/W      0x58A      0x595   RAM
-My_Code                           50     R     0xC611     0xC642   ROM_C000
+My_Code                           55     R     0xC779     0xC7AF   ROM_C000
 My_Var                             2   R/W      0x596      0x597   RAM
-CONSTANTS                         10     R     0xC643     0xC64C   ROM_C000
 .vectSeg273_vect                   4     R     0xFFF0     0xFFF3   .vectSeg273
 .vectSeg274_vect                   2     R     0xFFFE     0xFFFF   .vectSeg274
 
 Summary of section sizes per section type:
-READ_ONLY (R):         653 (dec:     1619)
+READ_ONLY (R):         7B6 (dec:     1974)
 READ_WRITE (R/W):      198 (dec:      408)
 NO_INIT (N/I):         160 (dec:      352)
 
@@ -336,8 +334,8 @@ NO_INIT (N/I):         160 (dec:      352)
 VECTOR-ALLOCATION SECTION
     Address     InitValue   InitFunction
 ---------------------------------------------------------------------------------------------
-     0xFFF0        0xC58E   RTI_ISR
-     0xFFF2        0xC60B   IRQ
+     0xFFF0        0xC60A   RTI_ISR
+     0xFFF2        0xC773   IRQ
      0xFFFE        0xC000   _Startup
 
 *********************************************************************************************
@@ -346,66 +344,74 @@ OBJECT-ALLOCATION SECTION
 ---------------------------------------------------------------------------------------------
 MODULE:                 -- main.asm.o --
 - PROCEDURES:
-     Entry                                     C000      24      36       0   .init       
+     Entry                                     C000      29      41       0   .init       
      _Startup                                  C000       0       0       0   .init       
      main                                      C000       0       0       0   .init       
-     reset                                     C024      34      52       0   .init       
-     Start                                     C058       B      11       0   .init       
-     WrongPass                                 C063       8       8       0   .init       
-     GetPass                                   C06B      15      21       0   .init       
-     GetOilPass                                C080       6       6       0   .init       
-     Oilloop                                   C086      12      18       0   .init       
-     CompPass                                  C098       5       5       0   .init       
-     OilCh                                     C09D       3       3       0   .init       
-     Oipass                                    C0A0      10      16       0   .init       
-     ButtPass                                  C0B0      10      16       0   .init       
-     chkpass                                   C0C0       3       3       0   .init       
-     chkloop                                   C0C3      14      20       0   .init       
-     GoodPass                                  C0D7       C      12       0   .init       
-     BadPass                                   C0E3       A      10       0   .init       
-     Push2strt                                 C0ED       C      12       0   .init       
-     StartCar                                  C0F9      1A      26       0   .init       
-     chngoill                                  C113      14      20       0   .init       
-     crash                                     C127       E      14       0   .init       
+     reset                                     C029      4B      75       0   .init       
+     Start                                     C074       B      11       0   .init       
+     WrongPass                                 C07F       8       8       0   .init       
+     GetPass                                   C087      1D      29       0   .init       
+     pass11                                    C0A4       E      14       0   .init       
+     pass111                                   C0B2       E      14       0   .init       
+     next                                      C0C0       8       8       0   .init       
+     GetOilPass                                C0C8       6       6       0   .init       
+     Oilloop                                   C0CE      12      18       0   .init       
+     CompPass                                  C0E0       5       5       0   .init       
+     OilCh                                     C0E5       3       3       0   .init       
+     Oipass                                    C0E8      10      16       0   .init       
+     ButtPass                                  C0F8      10      16       0   .init       
+     chkpass                                   C108       3       3       0   .init       
+     chkloop                                   C10B      14      20       0   .init       
+     GoodPass                                  C11F       C      12       0   .init       
+     BadPass                                   C12B       A      10       0   .init       
+     Push2strt                                 C135       C      12       0   .init       
+     StartCar                                  C141      1A      26       0   .init       
+     chngoill                                  C15B      14      20       0   .init       
+     crash                                     C16F       E      14       0   .init       
 - VARIABLES:
      passtemp                                   502       4       4       3   my_variable 
      passkey                                    506       4       4       3   my_variable 
-     LLED                                       50A       1       1       0   my_variable 
-     RLED                                       50B       1       1       0   my_variable 
-     HLED                                       50C       1       1       0   my_variable 
-     port_s                                     50D       1       1       2   my_variable 
-     DDR_S                                      50E       1       1       1   my_variable 
-     indexcnt                                   50F       1       1       6   my_variable 
-     IndxFlag                                   510       1       1       5   my_variable 
-     RightT                                     511       1       1       3   my_variable 
-     LeftT                                      512       1       1       4   my_variable 
-     FastFlag                                   513       1       1       6   my_variable 
-     SlowFlag                                   514       1       1       6   my_variable 
-     IRQFlag                                    515       1       1       5   my_variable 
-     LCDFlag                                    516       1       1       1   my_variable 
-     DCFlag                                     517       1       1       5   my_variable 
+     indexcnt                                   50A       1       1       5   my_variable 
+     IndxFlag                                   50B       1       1       1   my_variable 
+     RightT                                     50C       1       1       4   my_variable 
+     LeftT                                      50D       1       1       5   my_variable 
+     FastFlag                                   50E       1       1       8   my_variable 
+     SlowFlag                                   50F       1       1       8   my_variable 
+     IRQFlag                                    510       1       1       5   my_variable 
+     LCDFlag                                    511       1       1       1   my_variable 
+     LEDFlag                                    512       1       1       6   my_variable 
+     DCFlag                                     513       1       1       5   my_variable 
+     OilFlag                                    514       1       1       9   my_variable 
+     ODOFlag                                    515       1       1       4   my_variable 
+     TurnFlag                                   516       1       1       5   my_variable 
+     TurnDurFlag                                517       1       1       5   my_variable 
      ton                                        518       1       1       7   my_variable 
      toff                                       519       1       1       6   my_variable 
      mph                                        51A       1       1       7   my_variable 
      OdoNum                                     51B       2       2       5   my_variable 
      DCount                                     51D       1       1       0   my_variable 
      tempstring                                 51E      21      33       0   my_variable 
-     constant_string                           C240      21      33       0   my_constant 
-     strtpass                                  C261       4       4       1   my_constant 
-     oilpass                                   C265       3       3       1   my_constant 
+     index                                     C288       5       5       1   my_constant 
+     indexr                                    C28D       5       5       1   my_constant 
+     constant_string                           C292      21      33       0   my_constant 
+     strtpass                                  C2B3       4       4       1   my_constant 
+     oilpass                                   C2B7       3       3       1   my_constant 
 - LABELS:
      __SEG_END_SSTACK                           500       0       0       1               
      RTIFLG                                      37       0       0       0   .text       
      RTI_CTL                                     3B       0       0       0   .text       
      port_t_ddr                                 242       0       0       0   .text       
+     port_s                                     248       0       0       2   .text       
+     port_p                                     258       0       0       2   .text       
+     DDR_p                                      25A       0       0       0   .text       
 MODULE:                 -- lcddisp.c.o --
 - PROCEDURES:
-     delay_ms                                  C135      17      23       5   NON_BANKED  
-     init_LCD                                  C14C      52      82       1   NON_BANKED  
-     display_string                            C19E      38      56       3   NON_BANKED  
-     Delay                                     C1D6      1F      31       1   NON_BANKED  
-     epulse                                    C1F5      24      36       3   NON_BANKED  
-     sendCommand                               C219       F      15       7   NON_BANKED  
+     delay_ms                                  C17D      17      23       5   NON_BANKED  
+     init_LCD                                  C194      52      82       1   NON_BANKED  
+     display_string                            C1E6      38      56       3   NON_BANKED  
+     Delay                                     C21E      1F      31       1   NON_BANKED  
+     epulse                                    C23D      24      36       3   NON_BANKED  
+     sendCommand                               C261       F      15       7   NON_BANKED  
 - VARIABLES:
      data                                       500       2       2       4   .bss        
 MODULE:                 -- mc9s12e128.c.o --
@@ -686,67 +692,90 @@ MODULE:                 -- mc9s12e128.c.o --
      _PIFAD                                     27E       2       2       0   .abs_section_27e
 MODULE:                 -- potentiometer.c.o --
 - PROCEDURES:
-     read_pot                                  C228      18      24       1   NON_BANKED  
+     read_pot                                  C270      18      24       1   NON_BANKED  
 - VARIABLES:
      pot_value                                  585       2       2       2   .common     
 MODULE:                 -- LCD.asm.o --
 - PROCEDURES:
-     LCD                                       C39A      12      18       6   MyCode      
-     string_copy                               C3AC       3       3       3   MyCode      
-     cpy_loop                                  C3AF       9       9       0   MyCode      
-     Dispeed                                   C3B8      21      33       0   MyCode      
-     wuns                                      C3D9      27      39       0   MyCode      
+     LCD                                       C467      14      20      10   MyCode      
+     string_copy                               C47B       3       3       3   MyCode      
+     cpy_loop                                  C47E       9       9       0   MyCode      
+     Dispeed                                   C487      21      33       0   MyCode      
+     wuns                                      C4A8      28      40       0   MyCode      
 - VARIABLES:
      disp                                       53F      21      33       8   my_variable 
      temp_str                                   560      21      33       0   my_variable 
      ten                                        581       2       2       3   my_variable 
      wun                                        583       2       2       2   my_variable 
-     clearLCD_str                              C268      22      34       1   my_constant 
-     enterpass_str                             C28A      22      34       1   my_constant 
-     wrongpass_str                             C2AC      22      34       1   my_constant 
-     buttpass_str                              C2CE      22      34       1   my_constant 
-     speed_str                                 C2F0      22      34       1   my_constant 
-     Left_str                                  C312      22      34       0   my_constant 
-     Right_str                                 C334      22      34       0   my_constant 
-     crash_str                                 C356      22      34       1   my_constant 
-     chngoil_str                               C378      22      34       1   my_constant 
+     clearLCD_str                              C2BA      21      33       1   my_constant 
+     enterpass_str                             C2DB      21      33       1   my_constant 
+     pass1_str                                 C2FC      21      33       1   my_constant 
+     pass11_str                                C31D      21      33       1   my_constant 
+     pass111_str                               C33E      21      33       1   my_constant 
+     pass1111_str                              C35F      21      33       1   my_constant 
+     wrongpass_str                             C380      21      33       1   my_constant 
+     buttpass_str                              C3A1      21      33       1   my_constant 
+     speed_str                                 C3C2      21      33       1   my_constant 
+     Left_str                                  C3E3      21      33       0   my_constant 
+     Right_str                                 C404      21      33       0   my_constant 
+     crash_str                                 C425      21      33       1   my_constant 
+     chngoil_str                               C446      21      33       1   my_constant 
 MODULE:                 -- Hex Pad.asm.o --
 - PROCEDURES:
-     JUMPASS                                   C400      10      16       2   MyCode      
-     start                                     C410       5       5       0   MyCode      
-     scan                                      C415      16      22       0   MyCode      
-     release                                   C42B      13      19       0   MyCode      
-     firstLoop                                 C43E       B      11       0   MyCode      
-     endloop                                   C449       9       9       0   MyCode      
-     delay1                                    C452       4       4       1   MyCode      
-     loopd                                     C456       8       8       0   MyCode      
+     JUMPASS                                   C4D0      10      16       2   MyCode      
+     start                                     C4E0       5       5       0   MyCode      
+     scan                                      C4E5      16      22       0   MyCode      
+     release                                   C4FB      13      19       0   MyCode      
+     firstLoop                                 C50E       B      11       0   MyCode      
+     endloop                                   C519       9       9       0   MyCode      
+     delay1                                    C522       4       4       1   MyCode      
+     loopd                                     C526       8       8       0   MyCode      
 - VARIABLES:
-     send                                      C550       5       5       1   MY_EXTENDED_RAM
-     index                                     C555      10      16       1   MY_EXTENDED_RAM
+     send                                      C5C7       5       5       1   MY_EXTENDED_RAM
+     index                                     C5CC      10      16       1   MY_EXTENDED_RAM
      temp                                       587       1       1       3   vars        
      loop                                       588       1       1       0   vars        
      hexval                                     589       1       1       3   vars        
 MODULE:                 -- PB.asm.o --
 - PROCEDURES:
-     Pbutton                                   C565       8       8       1   code        
+     Pbutton                                   C5DC       8       8       1   code        
 - VARIABLES:
 MODULE:                 -- Pot.asm.o --
 - PROCEDURES:
-     GetSpd                                    C45E      29      41       1   MyCode      
-     MidPotChk                                 C487      1E      30       0   MyCode      
-     HiPotChk                                  C4A5      1C      28       0   MyCode      
-     MaxPot                                    C4C1      17      23       0   MyCode      
-     Pot0                                      C4D8      17      23       0   MyCode      
-     PotFound                                  C4EF       6       6       0   MyCode      
+     GetSpd                                    C52E      2B      43       1   MyCode      
+     MidPotChk                                 C559      1E      30       0   MyCode      
+     HiPotChk                                  C577      1C      28       0   MyCode      
+     MaxPot                                    C593      17      23       0   MyCode      
+     Pot0                                      C5AA      17      23       0   MyCode      
+     PotFound                                  C5C1       6       6       0   MyCode      
 - VARIABLES:
 MODULE:                 -- RTI.asm.o --
 - PROCEDURES:
-     RTI_ISR                                   C58E      22      34       0   mycode      
-     skipodo                                   C5B0      1F      31       0   mycode      
-     turnright                                 C5CF      28      40       0   mycode      
-     RToff                                     C5F7       9       9       0   mycode      
-     reset                                     C600       7       7       0   mycode      
-     endrti                                    C607       4       4       0   mycode      
+     RTI_ISR                                   C60A      16      22       0   mycode      
+     chkled                                    C620      19      25       0   mycode      
+     checksec                                  C639      17      23       0   mycode      
+     clrdur                                    C650       7       7       0   mycode      
+     clearDurflag                              C657       3       3       0   mycode      
+     setoil                                    C65A       A      10       0   mycode      
+     skipodo                                   C664      1F      31       0   mycode      
+     turnright                                 C683       8       8       0   mycode      
+     chkdc                                     C68B       9       9       0   mycode      
+     DCmotor                                   C694      1D      29       0   mycode      
+     RToff                                     C6B1       9       9       0   mycode      
+     reset                                     C6BA       7       7       0   mycode      
+     midendrti                                 C6C1       4       4       0   mycode      
+     Stepper                                   C6C5      14      20       0   mycode      
+     CW                                        C6D9       E      14       0   mycode      
+     CWstart                                   C6E7      15      21       0   mycode      
+     resetindxCW                               C6FC       8       8       0   mycode      
+     CCW                                       C704       C      12       0   mycode      
+     CCWstart                                  C710      15      21       0   mycode      
+     resetindxCCW                              C725       8       8       0   mycode      
+     RLED                                      C72D      19      25       0   mycode      
+     resetledR                                 C746       A      10       0   mycode      
+     LLED                                      C750      15      21       0   mycode      
+     resetledL                                 C765       A      10       0   mycode      
+     endrti                                    C76F       4       4       0   mycode      
 - VARIABLES:
      sum                                        58A       1       1       0   myvar       
      rtiCount                                   58B       2       2       4   myvar       
@@ -755,90 +784,74 @@ MODULE:                 -- RTI.asm.o --
      secCount                                   58F       1       1       4   myvar       
      sec5Count                                  590       1       1       2   myvar       
      DCount                                     591       1       1       0   myvar       
-     OilFlag                                    592       1       1       8   myvar       
-     ODOFlag                                    593       1       1       4   myvar       
-     TurnFlag                                   594       1       1       2   myvar       
-     TurnDurFlag                                595       1       1       3   myvar       
+     RLEDtmp                                    592       1       1       3   myvar       
+     LLEDtmp                                    593       1       1       3   myvar       
+     LEDcnt                                     594       1       1       3   myvar       
+     Turncnt                                    595       1       1       3   myvar       
 - LABELS:
      port_t                                     240       0       0       3   .text       
 MODULE:                 -- IRQ.asm.o --
 - PROCEDURES:
-     IRQ                                       C60B       6       6       0   mycode      
+     IRQ                                       C773       6       6       0   mycode      
 - VARIABLES:
 MODULE:                 -- ODOCount.asm.o --
 - PROCEDURES:
-     ODOCount                                  C56D      1A      26       1   code        
-     return                                    C587       3       3       0   code        
-     ChangeOilNow                              C58A       4       4       0   code        
+     ODOCount                                  C5E4      1F      31       1   code        
+     return                                    C603       3       3       0   code        
+     ChangeOilNow                              C606       4       4       0   code        
 - VARIABLES:
 MODULE:                 -- Switch.asm.o --
 - PROCEDURES:
-     TurnChk                                   C611      21      33       1   My_Code     
-     Fastturn                                  C632      10      16       0   My_Code     
-     return                                    C642       1       1       0   My_Code     
+     TurnChk                                   C779      20      32       1   My_Code     
+     Fastturn                                  C799       F      15       0   My_Code     
+     return                                    C7A8       1       1       0   My_Code     
+     noturn                                    C7A9       7       7       0   My_Code     
 - VARIABLES:
-     SlowTFlag                                  596       1       1       1   My_Var      
-     FastTFlag                                  597       1       1       1   My_Var      
-MODULE:                 -- stepper.asm.o --
-- PROCEDURES:
-     topreturn                                 C4F5       1       1       0   MyCode      
-     resetx                                    C4F6       5       5       0   MyCode      
-     Stepper                                   C4FB      14      20       2   MyCode      
-     CW                                        C50F       5       5       0   MyCode      
-     CWspd                                     C514       8       8       0   MyCode      
-     contin                                    C51C      14      20       0   MyCode      
-     CCW                                       C530       D      13       0   MyCode      
-     continccw                                 C53D      12      18       0   MyCode      
-     bottomend                                 C54F       1       1       0   MyCode      
-- VARIABLES:
-     index                                     C643       5       5       2   CONSTANTS   
-     indexr                                    C648       5       5       0   CONSTANTS   
-- LABELS:
-     port_p                                     258       0       0       0   .text       
+     SlowTFlag                                  596       1       1       3   My_Var      
+     FastTFlag                                  597       1       1       3   My_Var      
 
 *********************************************************************************************
 MODULE STATISTIC
   Name                                      Data   Code  Const
 ---------------------------------------------------------------------------------------------
-  main.asm.o                                  61    309     40
+  main.asm.o                                  61    381     50
   lcddisp.c.o                                  2    243      0
   mc9s12e128.c.o                             352      0      0
   potentiometer.c.o                            2     24      0
-  LCD.asm.o                                   70    102    306
+  LCD.asm.o                                   70    105    429
   Hex Pad.asm.o                                3     94     21
   PB.asm.o                                     0      8      0
-  Pot.asm.o                                    0    151      0
-  RTI.asm.o                                   12    125      0
+  Pot.asm.o                                    0    153      0
+  RTI.asm.o                                   12    361      0
   IRQ.asm.o                                    0      6      0
-  ODOCount.asm.o                               0     33      0
-  Switch.asm.o                                 2     50      0
-  stepper.asm.o                                0     91     10
+  ODOCount.asm.o                               0     38      0
+  Switch.asm.o                                 2     55      0
   other                                      256      6      0
 
 *********************************************************************************************
 SECTION USE IN OBJECT-ALLOCATION SECTION
 ---------------------------------------------------------------------------------------------
 SECTION: ".text"
-  RTIFLG RTI_CTL port_t port_t_ddr port_p 
+  RTIFLG RTI_CTL port_t port_t_ddr port_s port_p DDR_p 
 SECTION: ".bss"
   data 
 SECTION: ".init"
-  main _Startup Entry reset Start WrongPass GetPass GetOilPass Oilloop 
-  CompPass OilCh Oipass ButtPass chkpass chkloop GoodPass BadPass Push2strt 
-  StartCar chngoill crash 
+  main _Startup Entry reset Start WrongPass GetPass pass11 pass111 next 
+  GetOilPass Oilloop CompPass OilCh Oipass ButtPass chkpass chkloop GoodPass 
+  BadPass Push2strt StartCar chngoill crash 
 SECTION: "NON_BANKED"
   delay_ms init_LCD display_string Delay epulse sendCommand read_pot 
 SECTION: "my_constant"
-  constant_string strtpass oilpass clearLCD_str enterpass_str wrongpass_str 
-  buttpass_str speed_str Left_str Right_str crash_str chngoil_str 
+  index indexr constant_string strtpass oilpass clearLCD_str enterpass_str 
+  pass1_str pass11_str pass111_str pass1111_str wrongpass_str buttpass_str 
+  speed_str Left_str Right_str crash_str chngoil_str 
 SECTION: "MyCode"
   LCD string_copy cpy_loop Dispeed wuns JUMPASS start scan release firstLoop 
-  endloop delay1 loopd GetSpd MidPotChk HiPotChk MaxPot Pot0 PotFound topreturn 
-  resetx Stepper CW CWspd contin CCW continccw bottomend 
+  endloop delay1 loopd GetSpd MidPotChk HiPotChk MaxPot Pot0 PotFound 
 SECTION: "my_variable"
-  passtemp passkey LLED RLED HLED port_s DDR_S indexcnt IndxFlag RightT LeftT 
-  FastFlag SlowFlag IRQFlag LCDFlag DCFlag ton toff mph OdoNum DCount 
-  tempstring disp temp_str ten wun 
+  passtemp passkey indexcnt IndxFlag RightT LeftT FastFlag SlowFlag IRQFlag 
+  LCDFlag LEDFlag DCFlag OilFlag ODOFlag TurnFlag TurnDurFlag ton toff mph 
+  OdoNum DCount tempstring disp temp_str ten wun 
 SECTION: ".common"
   pot_value 
 SECTION: ".abs_section_8"
@@ -1394,16 +1407,16 @@ SECTION: "vars"
 SECTION: "code"
   Pbutton ODOCount return ChangeOilNow 
 SECTION: "mycode"
-  RTI_ISR skipodo turnright RToff reset endrti IRQ 
+  RTI_ISR chkled checksec clrdur clearDurflag setoil skipodo turnright chkdc 
+  DCmotor RToff reset midendrti Stepper CW CWstart resetindxCW CCW CCWstart 
+  resetindxCCW RLED resetledR LLED resetledL endrti IRQ 
 SECTION: "myvar"
-  sum rtiCount count stepdelay secCount sec5Count DCount OilFlag ODOFlag 
-  TurnFlag TurnDurFlag 
+  sum rtiCount count stepdelay secCount sec5Count DCount RLEDtmp LLEDtmp 
+  LEDcnt Turncnt 
 SECTION: "My_Code"
-  TurnChk Fastturn return 
+  TurnChk Fastturn return noturn 
 SECTION: "My_Var"
   SlowTFlag FastTFlag 
-SECTION: "CONSTANTS"
-  index indexr 
 
 *********************************************************************************************
 OBJECT LIST SORTED BY ADDRESS
@@ -1646,6 +1659,7 @@ OBJECT LIST SORTED BY ADDRESS
      _PERT                                      244       1       1       0   .abs_section_244
      _PPST                                      245       1       1       0   .abs_section_245
      _PTS                                       248       1       1       0   .abs_section_248
+     port_s                                     248       0       0       2   .text       
      _PTIS                                      249       1       1       0   .abs_section_249
      _DDRS                                      24A       1       1       0   .abs_section_24a
      _RDRS                                      24B       1       1       0   .abs_section_24b
@@ -1660,9 +1674,10 @@ OBJECT LIST SORTED BY ADDRESS
      _PPSM                                      255       1       1       0   .abs_section_255
      _WOMM                                      256       1       1       0   .abs_section_256
      _PTP                                       258       1       1       0   .abs_section_258
-     port_p                                     258       0       0       0   .text       
+     port_p                                     258       0       0       2   .text       
      _PTIP                                      259       1       1       0   .abs_section_259
      _DDRP                                      25A       1       1       0   .abs_section_25a
+     DDR_p                                      25A       0       0       0   .text       
      _RDRP                                      25B       1       1       0   .abs_section_25b
      _PERP                                      25C       1       1       0   .abs_section_25c
      _PPSP                                      25D       1       1       0   .abs_section_25d
@@ -1690,20 +1705,20 @@ OBJECT LIST SORTED BY ADDRESS
      data                                       500       2       2       4   .bss        
      passtemp                                   502       4       4       3   my_variable 
      passkey                                    506       4       4       3   my_variable 
-     LLED                                       50A       1       1       0   my_variable 
-     RLED                                       50B       1       1       0   my_variable 
-     HLED                                       50C       1       1       0   my_variable 
-     port_s                                     50D       1       1       2   my_variable 
-     DDR_S                                      50E       1       1       1   my_variable 
-     indexcnt                                   50F       1       1       6   my_variable 
-     IndxFlag                                   510       1       1       5   my_variable 
-     RightT                                     511       1       1       3   my_variable 
-     LeftT                                      512       1       1       4   my_variable 
-     FastFlag                                   513       1       1       6   my_variable 
-     SlowFlag                                   514       1       1       6   my_variable 
-     IRQFlag                                    515       1       1       5   my_variable 
-     LCDFlag                                    516       1       1       1   my_variable 
-     DCFlag                                     517       1       1       5   my_variable 
+     indexcnt                                   50A       1       1       5   my_variable 
+     IndxFlag                                   50B       1       1       1   my_variable 
+     RightT                                     50C       1       1       4   my_variable 
+     LeftT                                      50D       1       1       5   my_variable 
+     FastFlag                                   50E       1       1       8   my_variable 
+     SlowFlag                                   50F       1       1       8   my_variable 
+     IRQFlag                                    510       1       1       5   my_variable 
+     LCDFlag                                    511       1       1       1   my_variable 
+     LEDFlag                                    512       1       1       6   my_variable 
+     DCFlag                                     513       1       1       5   my_variable 
+     OilFlag                                    514       1       1       9   my_variable 
+     ODOFlag                                    515       1       1       4   my_variable 
+     TurnFlag                                   516       1       1       5   my_variable 
+     TurnDurFlag                                517       1       1       5   my_variable 
      ton                                        518       1       1       7   my_variable 
      toff                                       519       1       1       6   my_variable 
      mph                                        51A       1       1       7   my_variable 
@@ -1725,105 +1740,120 @@ OBJECT LIST SORTED BY ADDRESS
      secCount                                   58F       1       1       4   myvar       
      sec5Count                                  590       1       1       2   myvar       
      DCount                                     591       1       1       0   myvar       
-     OilFlag                                    592       1       1       8   myvar       
-     ODOFlag                                    593       1       1       4   myvar       
-     TurnFlag                                   594       1       1       2   myvar       
-     TurnDurFlag                                595       1       1       3   myvar       
-     SlowTFlag                                  596       1       1       1   My_Var      
-     FastTFlag                                  597       1       1       1   My_Var      
+     RLEDtmp                                    592       1       1       3   myvar       
+     LLEDtmp                                    593       1       1       3   myvar       
+     LEDcnt                                     594       1       1       3   myvar       
+     Turncnt                                    595       1       1       3   myvar       
+     SlowTFlag                                  596       1       1       3   My_Var      
+     FastTFlag                                  597       1       1       3   My_Var      
      main                                      C000       0       0       0   .init       
      _Startup                                  C000       0       0       0   .init       
-     Entry                                     C000      24      36       0   .init       
-     reset                                     C024      34      52       0   .init       
-     Start                                     C058       B      11       0   .init       
-     WrongPass                                 C063       8       8       0   .init       
-     GetPass                                   C06B      15      21       0   .init       
-     GetOilPass                                C080       6       6       0   .init       
-     Oilloop                                   C086      12      18       0   .init       
-     CompPass                                  C098       5       5       0   .init       
-     OilCh                                     C09D       3       3       0   .init       
-     Oipass                                    C0A0      10      16       0   .init       
-     ButtPass                                  C0B0      10      16       0   .init       
-     chkpass                                   C0C0       3       3       0   .init       
-     chkloop                                   C0C3      14      20       0   .init       
-     GoodPass                                  C0D7       C      12       0   .init       
-     BadPass                                   C0E3       A      10       0   .init       
-     Push2strt                                 C0ED       C      12       0   .init       
-     StartCar                                  C0F9      1A      26       0   .init       
-     chngoill                                  C113      14      20       0   .init       
-     crash                                     C127       E      14       0   .init       
-     delay_ms                                  C135      17      23       5   NON_BANKED  
-     init_LCD                                  C14C      52      82       1   NON_BANKED  
-     display_string                            C19E      38      56       3   NON_BANKED  
-     Delay                                     C1D6      1F      31       1   NON_BANKED  
-     epulse                                    C1F5      24      36       3   NON_BANKED  
-     sendCommand                               C219       F      15       7   NON_BANKED  
-     read_pot                                  C228      18      24       1   NON_BANKED  
-     constant_string                           C240      21      33       0   my_constant 
-     strtpass                                  C261       4       4       1   my_constant 
-     oilpass                                   C265       3       3       1   my_constant 
-     clearLCD_str                              C268      22      34       1   my_constant 
-     enterpass_str                             C28A      22      34       1   my_constant 
-     wrongpass_str                             C2AC      22      34       1   my_constant 
-     buttpass_str                              C2CE      22      34       1   my_constant 
-     speed_str                                 C2F0      22      34       1   my_constant 
-     Left_str                                  C312      22      34       0   my_constant 
-     Right_str                                 C334      22      34       0   my_constant 
-     crash_str                                 C356      22      34       1   my_constant 
-     chngoil_str                               C378      22      34       1   my_constant 
-     LCD                                       C39A      12      18       6   MyCode      
-     string_copy                               C3AC       3       3       3   MyCode      
-     cpy_loop                                  C3AF       9       9       0   MyCode      
-     Dispeed                                   C3B8      21      33       0   MyCode      
-     wuns                                      C3D9      27      39       0   MyCode      
-     JUMPASS                                   C400      10      16       2   MyCode      
-     start                                     C410       5       5       0   MyCode      
-     scan                                      C415      16      22       0   MyCode      
-     release                                   C42B      13      19       0   MyCode      
-     firstLoop                                 C43E       B      11       0   MyCode      
-     endloop                                   C449       9       9       0   MyCode      
-     delay1                                    C452       4       4       1   MyCode      
-     loopd                                     C456       8       8       0   MyCode      
-     GetSpd                                    C45E      29      41       1   MyCode      
-     MidPotChk                                 C487      1E      30       0   MyCode      
-     HiPotChk                                  C4A5      1C      28       0   MyCode      
-     MaxPot                                    C4C1      17      23       0   MyCode      
-     Pot0                                      C4D8      17      23       0   MyCode      
-     PotFound                                  C4EF       6       6       0   MyCode      
-     topreturn                                 C4F5       1       1       0   MyCode      
-     resetx                                    C4F6       5       5       0   MyCode      
-     Stepper                                   C4FB      14      20       2   MyCode      
-     CW                                        C50F       5       5       0   MyCode      
-     CWspd                                     C514       8       8       0   MyCode      
-     contin                                    C51C      14      20       0   MyCode      
-     CCW                                       C530       D      13       0   MyCode      
-     continccw                                 C53D      12      18       0   MyCode      
-     bottomend                                 C54F       1       1       0   MyCode      
-     send                                      C550       5       5       1   MY_EXTENDED_RAM
-     index                                     C555      10      16       1   MY_EXTENDED_RAM
-     Pbutton                                   C565       8       8       1   code        
-     ODOCount                                  C56D      1A      26       1   code        
-     return                                    C587       3       3       0   code        
-     ChangeOilNow                              C58A       4       4       0   code        
-     RTI_ISR                                   C58E      22      34       0   mycode      
-     skipodo                                   C5B0      1F      31       0   mycode      
-     turnright                                 C5CF      28      40       0   mycode      
-     RToff                                     C5F7       9       9       0   mycode      
-     reset                                     C600       7       7       0   mycode      
-     endrti                                    C607       4       4       0   mycode      
-     IRQ                                       C60B       6       6       0   mycode      
-     TurnChk                                   C611      21      33       1   My_Code     
-     Fastturn                                  C632      10      16       0   My_Code     
-     return                                    C642       1       1       0   My_Code     
-     index                                     C643       5       5       2   CONSTANTS   
-     indexr                                    C648       5       5       0   CONSTANTS   
+     Entry                                     C000      29      41       0   .init       
+     reset                                     C029      4B      75       0   .init       
+     Start                                     C074       B      11       0   .init       
+     WrongPass                                 C07F       8       8       0   .init       
+     GetPass                                   C087      1D      29       0   .init       
+     pass11                                    C0A4       E      14       0   .init       
+     pass111                                   C0B2       E      14       0   .init       
+     next                                      C0C0       8       8       0   .init       
+     GetOilPass                                C0C8       6       6       0   .init       
+     Oilloop                                   C0CE      12      18       0   .init       
+     CompPass                                  C0E0       5       5       0   .init       
+     OilCh                                     C0E5       3       3       0   .init       
+     Oipass                                    C0E8      10      16       0   .init       
+     ButtPass                                  C0F8      10      16       0   .init       
+     chkpass                                   C108       3       3       0   .init       
+     chkloop                                   C10B      14      20       0   .init       
+     GoodPass                                  C11F       C      12       0   .init       
+     BadPass                                   C12B       A      10       0   .init       
+     Push2strt                                 C135       C      12       0   .init       
+     StartCar                                  C141      1A      26       0   .init       
+     chngoill                                  C15B      14      20       0   .init       
+     crash                                     C16F       E      14       0   .init       
+     delay_ms                                  C17D      17      23       5   NON_BANKED  
+     init_LCD                                  C194      52      82       1   NON_BANKED  
+     display_string                            C1E6      38      56       3   NON_BANKED  
+     Delay                                     C21E      1F      31       1   NON_BANKED  
+     epulse                                    C23D      24      36       3   NON_BANKED  
+     sendCommand                               C261       F      15       7   NON_BANKED  
+     read_pot                                  C270      18      24       1   NON_BANKED  
+     index                                     C288       5       5       1   my_constant 
+     indexr                                    C28D       5       5       1   my_constant 
+     constant_string                           C292      21      33       0   my_constant 
+     strtpass                                  C2B3       4       4       1   my_constant 
+     oilpass                                   C2B7       3       3       1   my_constant 
+     clearLCD_str                              C2BA      21      33       1   my_constant 
+     enterpass_str                             C2DB      21      33       1   my_constant 
+     pass1_str                                 C2FC      21      33       1   my_constant 
+     pass11_str                                C31D      21      33       1   my_constant 
+     pass111_str                               C33E      21      33       1   my_constant 
+     pass1111_str                              C35F      21      33       1   my_constant 
+     wrongpass_str                             C380      21      33       1   my_constant 
+     buttpass_str                              C3A1      21      33       1   my_constant 
+     speed_str                                 C3C2      21      33       1   my_constant 
+     Left_str                                  C3E3      21      33       0   my_constant 
+     Right_str                                 C404      21      33       0   my_constant 
+     crash_str                                 C425      21      33       1   my_constant 
+     chngoil_str                               C446      21      33       1   my_constant 
+     LCD                                       C467      14      20      10   MyCode      
+     string_copy                               C47B       3       3       3   MyCode      
+     cpy_loop                                  C47E       9       9       0   MyCode      
+     Dispeed                                   C487      21      33       0   MyCode      
+     wuns                                      C4A8      28      40       0   MyCode      
+     JUMPASS                                   C4D0      10      16       2   MyCode      
+     start                                     C4E0       5       5       0   MyCode      
+     scan                                      C4E5      16      22       0   MyCode      
+     release                                   C4FB      13      19       0   MyCode      
+     firstLoop                                 C50E       B      11       0   MyCode      
+     endloop                                   C519       9       9       0   MyCode      
+     delay1                                    C522       4       4       1   MyCode      
+     loopd                                     C526       8       8       0   MyCode      
+     GetSpd                                    C52E      2B      43       1   MyCode      
+     MidPotChk                                 C559      1E      30       0   MyCode      
+     HiPotChk                                  C577      1C      28       0   MyCode      
+     MaxPot                                    C593      17      23       0   MyCode      
+     Pot0                                      C5AA      17      23       0   MyCode      
+     PotFound                                  C5C1       6       6       0   MyCode      
+     send                                      C5C7       5       5       1   MY_EXTENDED_RAM
+     index                                     C5CC      10      16       1   MY_EXTENDED_RAM
+     Pbutton                                   C5DC       8       8       1   code        
+     ODOCount                                  C5E4      1F      31       1   code        
+     return                                    C603       3       3       0   code        
+     ChangeOilNow                              C606       4       4       0   code        
+     RTI_ISR                                   C60A      16      22       0   mycode      
+     chkled                                    C620      19      25       0   mycode      
+     checksec                                  C639      17      23       0   mycode      
+     clrdur                                    C650       7       7       0   mycode      
+     clearDurflag                              C657       3       3       0   mycode      
+     setoil                                    C65A       A      10       0   mycode      
+     skipodo                                   C664      1F      31       0   mycode      
+     turnright                                 C683       8       8       0   mycode      
+     chkdc                                     C68B       9       9       0   mycode      
+     DCmotor                                   C694      1D      29       0   mycode      
+     RToff                                     C6B1       9       9       0   mycode      
+     reset                                     C6BA       7       7       0   mycode      
+     midendrti                                 C6C1       4       4       0   mycode      
+     Stepper                                   C6C5      14      20       0   mycode      
+     CW                                        C6D9       E      14       0   mycode      
+     CWstart                                   C6E7      15      21       0   mycode      
+     resetindxCW                               C6FC       8       8       0   mycode      
+     CCW                                       C704       C      12       0   mycode      
+     CCWstart                                  C710      15      21       0   mycode      
+     resetindxCCW                              C725       8       8       0   mycode      
+     RLED                                      C72D      19      25       0   mycode      
+     resetledR                                 C746       A      10       0   mycode      
+     LLED                                      C750      15      21       0   mycode      
+     resetledL                                 C765       A      10       0   mycode      
+     endrti                                    C76F       4       4       0   mycode      
+     IRQ                                       C773       6       6       0   mycode      
+     TurnChk                                   C779      20      32       1   My_Code     
+     Fastturn                                  C799       F      15       0   My_Code     
+     return                                    C7A8       1       1       0   My_Code     
+     noturn                                    C7A9       7       7       0   My_Code     
 
 *********************************************************************************************
 UNUSED-OBJECTS SECTION
 ---------------------------------------------------------------------------------------------
-NOT USED VARIABLES
-stepper.asm.o:
-  fdelay sdelay temp rotate 
 
 *********************************************************************************************
 COPYDOWN SECTION
@@ -1832,13 +1862,17 @@ COPYDOWN SECTION
 *********************************************************************************************
 OBJECT-DEPENDENCIES SECTION
 ---------------------------------------------------------------------------------------------
-Entry                     USES __SEG_END_SSTACK LCDFlag DDR_S IRQFlag 
-reset                     USES OdoNum rtiCount indexcnt IndxFlag OilFlag 
-                                ODOFlag secCount sec5Count IRQFlag clearLCD_str disp 
-                                init_LCD string_copy display_string 
+Entry                     USES __SEG_END_SSTACK LCDFlag IRQFlag 
+reset                     USES OdoNum rtiCount RLEDtmp LLEDtmp indexcnt 
+                                LEDFlag IndxFlag LeftT RightT OilFlag ODOFlag 
+                                TurnDurFlag TurnFlag secCount sec5Count IRQFlag 
+                                clearLCD_str disp init_LCD string_copy display_string 
 Start                     USES OilFlag enterpass_str LCD 
 WrongPass                 USES OilFlag 
-GetPass                   USES IRQFlag JUMPASS hexval passtemp 
+GetPass                   USES IRQFlag JUMPASS hexval passtemp pass1_str LCD 
+pass11                    USES pass11_str LCD 
+pass111                   USES pass111_str LCD 
+next                      USES pass1111_str LCD 
 GetOilPass                USES OdoNum 
 Oilloop                   USES JUMPASS hexval passtemp 
 Oipass                    USES oilpass passkey 
@@ -1871,24 +1905,36 @@ HiPotChk                  USES mph ton toff SlowFlag FastFlag
 MaxPot                    USES mph ton toff SlowFlag FastFlag 
 Pot0                      USES mph ton toff SlowFlag FastFlag 
 PotFound                  USES DCFlag 
-resetx                    USES indexcnt 
-Stepper                   USES TurnDurFlag RightT LeftT 
-CW                        USES IndxFlag 
-CWspd                     USES index IndxFlag 
-contin                    USES indexcnt port_s 
-CCW                       USES IndxFlag index 
-continccw                 USES indexcnt port_s 
-ODOCount                  USES ODOFlag mph OdoNum OilFlag 
+ODOCount                  USES ODOFlag OilFlag mph OdoNum 
 return                    USES OdoNum 
 ChangeOilNow              USES ODOFlag 
-RTI_ISR                   USES rtiCount secCount TurnDurFlag OilFlag ODOFlag 
+RTI_ISR                   USES Turncnt TurnFlag 
+chkled                    USES LEDcnt LEDFlag 
+checksec                  USES rtiCount secCount 
+clrdur                    USES TurnDurFlag 
+clearDurflag              USES TurnDurFlag 
+setoil                    USES OilFlag ODOFlag 
 skipodo                   USES secCount sec5Count TurnDurFlag LeftT RightT 
-turnright                 USES LeftT RightT DCFlag ton toff count 
+turnright                 USES LeftT RightT 
+chkdc                     USES DCFlag 
+DCmotor                   USES ton toff count 
 RToff                     USES DCFlag 
 reset                     USES count 
+Stepper                   USES TurnFlag TurnDurFlag RightT LeftT 
+CW                        USES SlowFlag FastFlag 
+CWstart                   USES indexcnt index port_p TurnFlag 
+resetindxCW               USES indexcnt 
+CCW                       USES SlowFlag FastFlag 
+CCWstart                  USES indexcnt indexr port_p TurnFlag 
+resetindxCCW              USES indexcnt 
+RLED                      USES LEDFlag RLEDtmp port_s 
+resetledR                 USES RLEDtmp LEDFlag 
+LLED                      USES LEDFlag LLEDtmp port_s 
+resetledL                 USES LLEDtmp LEDFlag 
 IRQ                       USES IRQFlag 
-TurnChk                   USES port_t SlowFlag Stepper SlowTFlag TurnFlag 
-Fastturn                  USES FastFlag Stepper FastTFlag TurnFlag 
+TurnChk                   USES port_t SlowFlag SlowTFlag FastTFlag 
+Fastturn                  USES FastFlag FastTFlag SlowTFlag 
+noturn                    USES SlowTFlag FastTFlag 
 
 *********************************************************************************************
 DEPENDENCY TREE
@@ -1909,6 +1955,6 @@ STATISTIC SECTION
 
 ExeFile:
 --------
-Number of blocks to be downloaded: 11
-Total size of all blocks to be downloaded: 1619
+Number of blocks to be downloaded: 9
+Total size of all blocks to be downloaded: 1974
 

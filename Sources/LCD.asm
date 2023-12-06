@@ -1,6 +1,6 @@
  XDEF enterpass_str, wrongpass_str, buttpass_str, speed_str, LCD, clearLCD_str 
  XDEF Left_str, Right_str, crash_str, chngoil_str, disp, ten, wun, string_copy      
-
+ XDEF pass1_str, pass11_str, pass111_str, pass1111_str
       
  XREF __SEG_END_SSTACK, init_LCD, display_string, pot_value, read_pot, mph, DCFlag, LCDFlag
 
@@ -13,15 +13,19 @@ wun:      ds.w 1
 ;constant section
 my_constant: SECTION
 ;LCD Strings
-clearLCD_str    dc.b  '                                 ',0
-enterpass_str   dc.b  'Enter Password  to buckle up     ',0
-wrongpass_str   dc.b  'Wrong Password                   ',0
-buttpass_str    dc.b  'Fancy Car:      Push to start    ',0
-speed_str       dc.b  'Speed is:    mph                 ',0
-Left_str        dc.b  'Left Turn                        ',0
-Right_str       dc.b  'Right Turn                       ',0
-crash_str       dc.b  'Oopsie we crash,enter pass       ',0
-chngoil_str     dc.b  'Oopsie no oil   enter pass       ',0
+clearLCD_str    dc.b  '                                ',0
+enterpass_str   dc.b  ' Enter Password                 ',0
+pass1_str       dc.b  ' Enter Password        *        ',0
+pass11_str      dc.b  ' Enter Password        **       ',0 
+pass111_str     dc.b  ' Enter Password        ***      ',0
+pass1111_str    dc.b  ' Enter Password        ****     ',0
+wrongpass_str   dc.b  ' Wrong Password                 ',0
+buttpass_str    dc.b  'Fancy Car:      Push to start   ',0
+speed_str       dc.b  'Speed is:    mph                ',0
+Left_str        dc.b  'Left Turn                       ',0
+Right_str       dc.b  'Right Turn                      ',0
+crash_str       dc.b  'Oopsie we crash,enter pass      ',0
+chngoil_str     dc.b  'Oopsie no oil   enter pass      ',0
                                      ;|
                                      ;^screen newline
 
@@ -36,13 +40,14 @@ LCD:
            ; movb #1, LCDFlag
             ;jsr init_LCD
  lcdcont: 	;pulx
+            pshy
             ldy #disp
 	          jsr string_copy				;passes arguments to string copy subroutine
     
             ldd #disp
             brset DCFlag, #1, Dispeed    ;get pot then speed to display with
             jsr display_string
-    
+            puly
             rts
 
 
@@ -93,6 +98,7 @@ wuns: std 	wun
 	    ldd #disp
 	    jsr display_string
 	  	movb  #0, DCFlag
+	  	puly
 	    rts
 
 

@@ -2,7 +2,7 @@
             INCLUDE 'derivative.inc'
 
 ; export symbols
-             XDEF GetSpd, 
+             XDEF GetSpd, SlowFlag, FastFlag
             ; we use export 'Entry' as symbol. This allows us to
             ; reference 'Entry' either in the linker .prm file
             ; or from C/C++ later on
@@ -40,7 +40,7 @@ sortpot:      ldd  pot_value         ;is pot_value 0
               movb  #4,  ton      ;ton = 4
               movb  #11, toff     ;toff = 11
               movb  #1,  SlowFlag                     ;slowflag set
-              clr   FastFlag
+              movb  #1,  FastFlag
               bra   PotFound       ;bra pot                 
                             
                                    

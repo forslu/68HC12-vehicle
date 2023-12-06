@@ -1,8 +1,11 @@
- ;RTI_ISR
+                                ;RTI_ISR
                
- XDEF RTI_ISR, sum, rtiCount, port_t, secCount, sec5Count, TurnFlag, OilFlag, TurnDurFlag, DCount, ODOFlag
- XREF ton, toff, DCFlag, RTI_CTL,  port_t_ddr, IRQFlag, LeftT, RightT
- 
+ XDEF RTI_ISR, sum, rtiCount, port_t, secCount, sec5Count, 
+ XDEF TurnFlag, OilFlag, TurnDurFlag, DCount, ODOFlag, LLEDtmp, RLEDtmp
+ XREF ton, toff, DCFlag, RTI_CTL,  port_t_ddr, IRQFlag, LeftT, RightT, index
+ XREF indexr, indexcnt,  CrsLED, SlowFlag, FastFlag, port_p, port_s, LEDFlag
+ XREF TurnFlag, ODOFlag, OilFlag, TurnDurFlag
+; RLED, LLED,
 Const:    section
 CRGFLG:     equ  $37 
 port_t:     equ  $240
@@ -10,20 +13,22 @@ port_t:     equ  $240
 
 myvar:  section
 
-sum         ds.b 1
-rtiCount    ds.w 1
-count       ds.b 1
-stepdelay:  ds.b 1
-secCount    ds.b 1
-sec5Count   ds.b 1
-DCount      ds.b 1
- 
+sum:         ds.b 1
+rtiCount:    ds.w 1
+count:       ds.b 1
+stepdelay:   ds.b 1
+secCount:    ds.b 1
+sec5Count:   ds.b 1
+DCount:      ds.b 1
+RLEDtmp:     ds.b 1 
+LLEDtmp:	   ds.b 1
+LEDcnt:		   ds.b 1
 
+Turncnt:	   ds.b 1
+            
 ;not sure if needed//MotorFlag   ds.b 1
-OilFlag      ds.b 1
-ODOFlag      ds.b 1
-TurnFlag     ds.b 1
-TurnDurFlag  ds.b 1 
+
+
  
 mycode:  section
          
@@ -34,52 +39,69 @@ RTI_ISR:
 ;NOTICE: Potentially need to move flag checks here.to branch to them.
           
           ;brset IRQFlag, #1, endrti
-          ldd rtiCount
-          incb
+          ldaa Turncnt
+          adda #1
+		      staa Turncnt
+		      cmpa #10
+		      ble chkled
+		      ldaa #0
+		      staa Turncnt
+		      movb #1, TurnFlag
+        
+chkled:	  ldd LEDcnt
+		      addd #1
+		      std LEDcnt
+		      cpd #122		  
+		      ble  checksec
+		      ldd  #0
+		      std  LEDcnt
+		      movb  #1, LEDFlag
+  
+checksec: ldd rtiCount
+		      addd #1
           std rtiCount
-           
           cpd #977
-          
-          bge endrti
+          ble clrdur
           inc secCount
           ldd #0
           std rtiCount
 ;setting second flags 
-                          ;brset TurnDurFlag, #1, clearflag
-         
+		  
+ clrdur:  brset TurnDurFlag, #1, clearDurflag
+          bra setoil
                          ;movb #1, TurnDurFlag   ;set second flag (execute at 1 second: turn duration(stepper)  
                            ;movb #1, RightT
                           ;clr      LeftT
                         
-          clr  TurnDurFlag
+clearDurflag: clr  TurnDurFlag
           ;movb #1, LeftT
           ;clr  RightT         
 setoil:   brset OilFlag, #1, skipodo
           movb #1, ODOFlag               ;ODO flag count miles
-          ;movb #1, OilFlag                      ;Blinker duration (LED)
+          
 
 ;5 second check          
 skipodo:  ldaa secCount
           cmpa #5
-          bne  endrti
+          bne  chkdc
           inc  sec5Count
           clr  secCount
           movb #1, TurnDurFlag ;changed from TurnFlag  ;set 5 second flag (execute turn)  clr for R and L turn
 
 ;Alternate R L          
-          brset LeftT, #1, turnright
+Alternate:brset LeftT, #1, turnright
           clr  RightT
           movb #1, LeftT
 turnright:clr  LeftT 
           movb #1, RightT
           ;not sure if needed//movb #1, MotorFlag            
           
-          brclr DCFlag, #1, endrti            ;if dcmotor isnt set skip the code
-         ; bra endrti
-          
-          
+chkdc:    brset DCFlag, #1, DCmotor           ;if dcmotor isnt set skip the code, also skip step motor bc you cant turn if you arent moving
+          lbra endrti
 
-;DC MOTOR     do i put this in rti or dcmotor.asm
+    
+
+;DC MOTOR     
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 DCmotor:    ;brset OilFlag, #1, endrti
             ldaa ton                      
@@ -95,24 +117,101 @@ RTon:
 	          bge  RToff          ;~~~~~~~~~~~
 	          
 	          bset port_t, #$8    ;set motor
-	          bra  endrti
+	          lbra Stepper
 	        
 	          
 	    
 	          
 RToff:      bclr port_t, #$8
             movb #0, DCFlag
-           
-            
-
-
+                      
 reset:      movb #0, count
-            bra endrti         
+            bra  Stepper
+
+midendrti:  bset CRGFLG, #$80
+            rti              
+                                 
               
-              
-              
+;STEP MOTOR
+;Vars: crrntindexR,crrntindexL both pointers to current index value
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            
+   Stepper: 
+			      brclr TurnFlag, #1, midendrti  
+            brclr TurnDurFlag, #1, midendrti       
+            brset RightT, #1, CW         ;if flag for right turn is set move to CW
+            brset LeftT,  #1, CCW        ;if flag for left turn is set move to CCW
+			
+;CW PORTION OF CODE  
+         
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~            
+CW:	brset SlowFlag, #1, CWstart
+		brset FastFlag, #1, CWstart
+		lbra   endrti
+		
+CWstart:			;indexcnt 0-3
+         ldx indexcnt
+         cpx #4
+         bge  resetindxCW
+         ldaa index, x
+         inx
+         staa port_p
+         clr TurnFlag
+         bra RLED
+
+resetindxCW:	 ldx #0
+			 stx indexcnt
+			 bra CW
+	    	 
+CCW:	brset SlowFlag, #1, CCWstart
+	  	brset FastFlag, #1, CCWstart
+	  	bra   endrti		
+
+CCWstart:		;indexcnt 0-3
+  ldx  indexcnt
+  cpx  #4
+  bge  resetindxCCW
+  ldaa indexr, x
+  inx
+  staa port_p
+  clr  TurnFlag
+  bra  LLED
+
+resetindxCCW:	 ldx #0
+			 stx   indexcnt
+			 bra   CCW
 
 
+
+
+	RLED: brclr LEDFlag, #1, endrti
+		  ldaa #0
+		  ldab RLEDtmp
+		  ldx #2
+		  idiv 	 
+		  cpx  #1
+		  beq  resetledR
+		  stx  port_s		  
+		  bra  endrti
+
+resetledR:ldaa #255
+		  staa RLEDtmp
+		  clr LEDFlag
+		  bra endrti
+		  
+	LLED: brclr LEDFlag, #1, endrti
+		  ldaa LLEDtmp
+		  ldab #2
+		  mul 
+		  cpd  #255
+		  bge  resetledL
+		  std  port_s		 
+		  bra  endrti
+
+resetledL:ldaa #1
+          staa LLEDtmp
+		      clr LEDFlag
+		      bra endrti
 
 
 

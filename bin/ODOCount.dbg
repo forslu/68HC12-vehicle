@@ -8,7 +8,7 @@
 
 
 ODOCount:          brclr ODOFlag, #1, ChangeOilNow
-                   ;brclr OilFlag, #1, return
+                   brclr OilFlag, #1, return
                    ldd #0                 
                    ldab mph            ;load mph
                    addd OdoNum        ;add to Odometer

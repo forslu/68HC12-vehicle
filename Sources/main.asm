@@ -1,61 +1,214 @@
 ;**************************************************************
-;* Notes:                                                     *
-;*       -LCDflag Key: 0=start, 1=IRQ, 2=ChnOil,                  *
-;*        *
-;*        *
-;*               *
-;*        *
+;* This stationery serves as the framework for a              *
+;* user application. For a more comprehensive program that    *
+;* demonstrates the more advanced functionality of this       *
+;* processor, please see the demonstration applications       *
+;* located in the examples subdirectory of the                *
+;* Freescale CodeWarrior for the HC12 Program directory       *
 ;**************************************************************
 ; Include derivative-specific definitions
             INCLUDE 'derivative.inc'
 
 ; export symbols
-            XDEF Entry, _Startup, main, ton, toff
-            XREF __SEG_END_SSTACK, Swich, TurnFlag, DCFlag, TurnDurFlag, SLCDCrash, LCDEmpty, LCDEnterpass, LCDincorrect, LCDpushbutton, LCDspeed, LCDFlag, LCD, LCDOil, pot_val, read_pot,  RTI_ISR, sum, hexval, JUMPASS   
-                                   
-            
-            
-   ;potentiometer.c.o was created auto????         
+            XDEF Entry,Turncnt,LEDcnt, port_t, rtiCount,temp_str, IndxFlag, indexcnt, RightT, LeftT, _Startup, main, ton, toff, DCFlag,  LCDFlag,mph
+            XDEF tempstring,port_t, SlowFlag,speakflag, FastFlag, disp,   RTI_CTL ,RTIFLG, port_t_ddr, OdoNum, IRQFlag, port_p,DDR_p
+            XDEF  LLEDtmp, RLEDtmp, TurnFlag, mocount, ODOFlag, OilFlag, TurnDurFlag, port_s, indexr,clearLCD_str, index, LEDFlag,  secCount, sec5Count,
+        ;  LLED, RLED, HLED,
+            XREF init_LCD, read_pot, display_string, TurnChk,   
+            XREF __SEG_END_SSTACK, JUMPASS, hexval, Pbutton ,RTI_ISR, ODOCount
+            ;  TurnFlag, TurnDurFlag, SLCDCrash  
+            XREF pot_value, speed_str, GetSpd,  SendsChr.c
+           ;  sum
+            XREF potentiometer.c, LCD, wrongpass_str, buttpass_str, 
+            XREF  Left_str, Right_str, crash_str, chngoil_str,  string_copy
+            XREF pass1_str, pass11_str, pass111_str, pass1111_str, 
+	         
 
-MY_EXTENDED_RAM: SECTION
-strtpass dc.b  $EB, $77, $7B, $7D
-oilpass  dc.b  $7D, $7B, $77
-
-myvars:   section
-passtemp  ds.b  4
-passkey   ds.b  4
-OilFlag   ds.b  1
-ton:      ds.b  1
-toff:     ds.b  1
-mph:      ds.b  1
-OdoNum:   ds.w  1
-DCount:  ds.b  1
+         
+          
+   ;for LCD statements enter:
+   ;         ldx  #*_str   ;call LCD to display               
+           ; jsr  LCD
 
 
+; variable/data section
+my_variable: SECTION
+
+
+passtemp:       ds.b  4
+passkey:        ds.b  4
+;LLED:           ds.b  1 
+;RLED:           ds.b  1
+;HLED:           ds.b  1
+indexcnt:       ds.w  1
+speakflag:      ds.b  1
+
+IndxFlag:       ds.b  1
+RightT:         ds.b  1
+LeftT:          ds.b  1
+FastFlag:       ds.b  1
+LEDcnt:		   ds.b 1
+
+Turncnt:	   ds.b 1
+SlowFlag:       ds.b  1
+IRQFlag:        ds.b  1
+LCDFlag:        ds.b  1
+LEDFlag:        ds.b 1
+RLEDtmp:       ds.b 1 
+LLEDtmp:	     ds.b 1
+DCFlag:         ds.b  1
+mocount:       ds.b 1
+OilFlag      ds.b 1
+ODOFlag      ds.b 1
+TurnFlag     ds.b 1
+TurnDurFlag  ds.b 1
+secCount:    ds.b 1
+sec5Count:   ds.b 1
+ton:            ds.b  1
+toff:           ds.b  1
+mph:            ds.b  1
+OdoNum:         ds.w  1
+rtiCount:    ds.w 1
+;DCount:         ds.b  1
+disp:	          ds.b 33
+temp_str:       ds.b 33
+tempstring:     ds.b 33
+
+;constant section
+my_constant: SECTION
+clearLCD_str    dc.b  '                                ',0
+enterpass_str   dc.b  ' Enter Password                 ',0
+RTIFLG:     equ  $0037
+RGINT:      equ  $0038  
+RTI_CTL:    equ  $003B
+port_t:     equ  $240
+port_s:     equ  $248
+DDR_S:      equ  $24A
+port_t_ddr: equ  $242
+port_p:     equ  $258
+DDR_p:      equ  $25A
+index:      dc.b  $0A,$12,$14,$0C,$0
+indexr:     dc.b  $0C,$14,$12,$0A,$0
+
+
+constant_string dc.b  'The value of the pot is:        ',0
+strtpass        dc.b   $1, $2, $3, $4
+oilpass         dc.b   $1, $2, $3
+
+
+
+; code section
 MyCode:     SECTION
-main:
-_Startup:
 Entry:
-            LDS  #__SEG_END_SSTACK     ; initialize the stack pointer
-            CLI                     ; enable interrupts
+_Startup:
+main:
+            ;movb #$8, port_t_ddr     ;OR bset port_t_ddr, #$8	 ;set bit 3 of port t 
+            ;bset port_t, #$8    ;set motor
+            lds #__SEG_END_SSTACK			;initializes stack pointer	
+            movb  #0, LCDFlag
+            movb  #$C0, INTCR
+            movb  #$80, RGINT
+            movb  #$40, RTI_CTL
+            movb  #$1E, DDR_p
+            movb  #$FF, DDR_S
+            movb  #$FC, port_t_ddr     ;OR bset port_t_ddr, #$8	 ;set bit 3 of port t
             
-
-;START
-;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Start:      ldx  #0
+            clr   IRQFlag
+reset:      ldd   #0            
+            std   OdoNum
+            std   rtiCount
+            std  indexcnt
+            ldaa  #$FF
+		        staa  RLEDtmp
+		      	ldaa  #0
+		      	staa  rtiCount
+		      	staa  LEDcnt	
+		      	
+		        staa	Turncnt
+		        staa  mph
+            
+            ldaa  #1
+            
+		      	staa  LLEDtmp
+            clr   ton
+            clr   toff
+            clr   LEDFlag
+            clr   IndxFlag
+            clr   DCFlag
+            clr   LeftT
+            clr   RightT
+            clr   OilFlag
+            clr   ODOFlag
+            clr   TurnDurFlag
+            clr   speakflag
+            clr   SlowFlag
+            clr   FastFlag
+            clr   mocount
+            clr   TurnFlag
+            clr   secCount
+            clr   sec5Count
+            brset IRQFlag, #1, WrongPass
+    ;clear LCD        
+            ldx   #clearLCD_str
+            ldy   #disp
+            jsr   init_LCD
+            jsr   string_copy
+            ldd   #disp
+            jsr   display_string
+           
+            
+                
+Start:        
+            
             brset OilFlag, #1, GetOilPass
-GetPass:    ;set password for start
-            ;call LCD to display "enter password"
-            jsr  JUMPASS     ;call keypad for password
-            ldaa hexval     ;load keypad value  to a
-            staa passtemp, x   ;store keypad val to passtemp
-            inx              ;
-            cpx  #4
-            bne  GetPass
-            bra  CompPass
+            
+            ldx  #enterpass_str   ;call LCD to display               
+            jsr  LCD
 
-                        
-GetOilPass: ldx #0
+WrongPass:  ldy   #0
+            brset OilFlag, #1, GetOilPass
+GetPass:    clr   IRQFlag
+            pshy
+            jsr   JUMPASS
+            puly            ;call keypad for password
+            ldaa  hexval     ;load keypad value to a
+            staa  passtemp, y   ;store keypad val to passtemp
+						
+Fill:   cpy #0
+		 	  bne pass11
+	      ldx #pass1_str
+			  jsr LCD
+			  iny
+		    bra GetPass
+			
+pass11: cpy #1
+			  bne pass111
+			  ldx #pass11_str
+			 ; pshy 
+			  jsr LCD
+			 ; puly
+			  iny
+			  bra GetPass
+			
+pass111: cpy #2
+			   bne next
+			   ldx #pass111_str
+			   ;pshy
+			   jsr LCD
+			   ;puly
+			   iny
+			   bra GetPass
+            
+next:                 
+			ldx #pass1111_str
+		;pshy
+			jsr LCD
+		 ; puly
+      bra CompPass
+
+GetOilPass: ldx  #0
+            stx  OdoNum
+           
 Oilloop:    jsr  JUMPASS     ;call keypad for password
             ldaa hexval     ;load keypad value  to a
             staa passtemp, x   ;store keypad val to passtemp
@@ -66,180 +219,85 @@ Oilloop:    jsr  JUMPASS     ;call keypad for password
             
             
 ;compare password with entry          
-CompPass:   ldx #0                ;x is counter for pass digits
-            bra   ButtPass           ;else branch to ButtPass
+CompPass:   ldx   #0                ;x is counter for pass digits
+            bra   ButtPass           ; branch to ButtPass
             
-OilCh:      ldx #0
-            inx               ;check one less digit (3)
-            ldaa  oilpass          ;set passkey to Oilpassword
-            staa  passkey
+OilCh:      ldx   #0
+                           ;check one less digit (3)
+Oipass:     ldaa  oilpass, x   ;maybe immediate?       ;set passkey to Oilpassword
+            staa  passkey, x
+            inx
+            cpx   #3
+            bne   Oipass
             bra   chkpass          ;branch to check password
                         
-ButtPass:   ldaa strtpass          ;set passkey to startpassword
-            staa passkey
-            bra  chkpass           ;branch to check password
+ButtPass:   ldaa  strtpass, x        ;set passkey to startpassword
+            staa  passkey, x
+            inx
+            cpx   #4
+            bne   ButtPass
+            bra   chkpass           ;branch to check password
                  
-chkpass:    cpx  #4
-            beq  GoodPass
-            ldaa passtemp, x  ;this or do y+
-            ldab passkey, x  ;and x
+chkpass:    ldx   #0
+chkloop:    cpx   #4
+            beq   GoodPass
+            ldaa  passtemp, x  ;this or do y+
+            ldab  passkey, x  ;and x
             inx
             cba
-            beq CompPass
-            bra BadPass
+            beq   chkloop
+            bra   BadPass
             
             
 GoodPass:   ;WIP//jsr HappySound                  ;speaker for correct
-            movb  #0, OilFlag        ;clear OilFlag
-            bra Push2strt
+            brclr OilFlag, #1, Push2strt             ;bra to push2start if oilflag is clear (didnt change oil)
+            clr   OilFlag
+            lbra   Start
                       
 BadPass:    ;WIP//jsr SadSound                  ;speaker for incorrect 
-            ;WIP//call LCD to display "wrong password"
-            lbra Start          
-                      ;return to start 
-Push2strt:            ;WIP//call LCD to display "press button to start"
-                      ;//WIP push to start
-                     
-;POT
+            ldx   #wrongpass_str            ;call LCD to display "wrong password"
+            jsr   LCD           
+            lbra  WrongPass          ;return to start 
+                      
+Push2strt:  ldx   #buttpass_str      ;call LCD to display "press button to start"
+            jsr   LCD 
+            jsr   Pbutton            ;button to start
+
+            
+                      
+                           
+
+
+;RUN CAR
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-pot:
-              jsr read_pot  ;jsr read pot value
-                
-                    
-;sortpot
-;_________________________________________________________________________     
-sortpot:      ldaa  pot_val         ;is pot_val 0   
-              cmpa  #0
-              beq   Pot0        ;if so branch to end
-                
-              cmpa  #31          ;is potval < or >= 31
-              bge   MidPotChk    ;if >= branch to UpotChk
-                                                
-;potval is < 31              
-              movb  #15, mph      ;mph = 15              
-              movb  #4,  ton      ;ton = 4
-              movb  #11, toff     ;toff = 11
-              bra   PotFound       ;bra pot                 
-                            
-                                   
-MidPotChk:    cmpa  #61                ;is potval < or >= 61      
-              bge   HiPotChk           ;if >= branch to HiPotChk
-                                 
-;potval is < 61              
-              movb  #30, mph      ;mph = 30             
-              movb  #8,  ton      ;ton = 8
-              movb  #7,  toff     ;toff = 7
-              bra   PotFound      ;bra pot                      
-                                      
-                                
-HiPotChk:     cmpa #91            ;is potval < or >= 91
-              bge  MaxPot         ;if >= branch to MaxPot
-              
-;potval is < 91              
-              movb  #45, mph      ;mph = 45             
-              movb  #12,  ton     ;ton = 12
-              movb  #3,  toff     ;toff = 3
-              bra   PotFound      ;bra pot                    
-                                         
-                                          
-MaxPot:                                        
-;potval is >= 91  
-              movb  #45, mph      ;mph = 60             
-              movb  #12,  ton     ;ton = 15
-              movb  #3,  toff     ;toff =0
-              bra   PotFound      ;bra potFound                                          
-Pot0:
-;(potval=0) ton = 0 toff = 15 
-              movb  #0, mph      ;mph = 60             
-              movb  #0, ton      ;ton = 15
-              movb  #0, toff     ;toff =0
-              bra   PotFound     ;bra potFound 
-                                                       
-PotFound:
-              ;jsr   DCMOTOR
-              bra   ODO
-              
-                                                         
-  
-;_______________________________________________________________________                                  
-                      
-;DC MOTOR (ODOMETER)
-;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-ODO:        brset DCFlag, #1, AddMi        ;branch if check second flag=1
-            bra   Switches         ;next           
-           
-
-
-AddMi:      
- ;collects mileage 
-            movb  #0, DCFlag  ;clearing flag
-            ldab  mph         ;load b with mph
-            ldx   OdoNum      ;load x with OdoNum and add them
-            abx
-            stx   OdoNum      ;store x back to OdoNum
-            cpx   #3000       ;If Odonum is >= 3000 change oil
-            bge   ChgOil
-            lbra   Start      ;else move on
+            ldx   #0      ;Set x to 0 for step motor
             
-ChgOil:         ;suspend all devices
-            movb #2, LCDFlag
-            movb #1, OilFlag          
-            jsr  LCDOil
-            jsr  CompPass
-            bra  Switches
+  StartCar: cli
+            brset IRQFlag,#1, crash 
+            jsr   GetSpd
+            jsr   TurnChk       
+            jsr   LCD
+            jsr   ODOCount
             
+     ;check oil flag      
+            brset OilFlag, #1, chngoill ;ldaa OilFlag    ;long brset 
              
-
-;IRQ
-;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                      
-   ;jsr keypadcrash   
-      
-      
-      
-;KEYPAD
-;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- ;password ds.b 4    01, 02, 03, 04
- ;keypad input into a load first byte of password into b
- ;cba (compare b to a)
- ;continue for rest 
-
-
- ;keypadcrash:      
-                    ;enter crash password
-                    
-
-
-;TURNING
-;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~    
- Switches:  brset TurnFlag, #2, strturn
-            bra   pushbutt
+            bra   StartCar
             
- strturn:   movb #0, TurnFlag
-            jsr Swich   
-            
-            
-                 
 
-;STEPPER MOTOR
-;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+chngoill:   bclr  port_t, #$8
+            ;ldd   #0
+            ;std   OdoNum
+            ldx   #chngoil_str
+            jsr   LCD
+            lbra  GetOilPass
 
-
-
-;TURNING
-;__________________________________________________________________________________
-
-
-;LED
-;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     ;turn signal
-
-;____________________________________________________________________________________
-
-
-
-;LCD
-;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+crash:      bclr  port_t, #$8    ;stop dcmotor
+                           ;stop stepper
+            ldx   #crash_str
+            jsr   LCD
+          
+            lbra  reset
 
 
 
@@ -252,36 +310,11 @@ ChgOil:         ;suspend all devices
 
 
 
-;PUSH BUTTON
-;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   pushbutt:
 
 
 
 
 
-;SPEAKER
-;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-                      
-                      
+
+
+

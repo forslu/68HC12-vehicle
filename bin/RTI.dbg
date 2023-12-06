@@ -1,29 +1,22 @@
                                 ;RTI_ISR
                
- XDEF RTI_ISR, sum, rtiCount, port_t, secCount, sec5Count, 
- XDEF TurnFlag, OilFlag, DCount, ODOFlag, LLEDtmp, RLEDtmp
- XREF ton, toff, DCFlag, RTI_CTL,  port_t_ddr, IRQFlag, LeftT, RightT, index
- XREF indexr, indexcnt,  CrsLED, SlowFlag, FastFlag, port_p, port_s, LEDFlag
- XREF TurnFlag, ODOFlag, OilFlag, TurnDurFlag, secCount, sec5Count
-; RLED, LLED,
+ XDEF RTI_ISR,  
+ XREF ton, toff, Turncnt,LEDcnt , DCFlag, RTI_CTL,  port_t_ddr, IRQFlag, LeftT, RightT, index
+ XREF indexr, indexcnt,   SlowFlag, FastFlag, port_p, port_s, LEDFlag
+ XREF TurnFlag, port_t,  speakflag, LLEDtmp, RLEDtmp, ODOFlag, mocount, OilFlag,  TurnDurFlag, rtiCount, secCount, sec5Count
+; RLED, LLED,  CrsLED,
 Const:    section
 CRGFLG:     equ  $37 
-port_t:     equ  $240
+
 
 
 myvar:  section
 
-sum:         ds.b 1
-rtiCount:    ds.w 1
-count:       ds.b 1
-stepdelay:   ds.b 1
+;stepdelay:   ds.b 1
 
-DCount:      ds.b 1
-RLEDtmp:     ds.b 1 
-LLEDtmp:	   ds.b 1
-LEDcnt:		   ds.b 1
+;DCount:      ds.b 1
 
-Turncnt:	   ds.b 1
+
             
 ;not sure if needed//MotorFlag   ds.b 1
 
@@ -42,7 +35,7 @@ RTI_ISR:
           adda #1
 		      staa Turncnt
 		      cmpa #10
-		      ble chkled
+		      blt chkled
 		      ldaa #0
 		      staa Turncnt
 		      movb #1, TurnFlag
@@ -51,7 +44,7 @@ chkled:	  ldaa LEDcnt
 		      adda #1
 		      staa LEDcnt
 		      cmpa #122		  
-		      ble  checksec
+		      blt  checksec
 		      ldaa  #0
 		      staa  LEDcnt
 		      movb  #1, LEDFlag
@@ -60,7 +53,7 @@ checksec: ldd rtiCount
 		      addd #1
           std rtiCount
           cpd #977
-          ble clrdur
+          lblt endrti
           inc secCount
           ldd #0
           std rtiCount
@@ -82,7 +75,7 @@ setoil:   brset OilFlag, #1, skipodo
 ;5 second check          
 skipodo:  ldaa secCount
           cmpa #5
-          bne  chkdc
+          blt  chkdc
           inc  sec5Count
           clr  secCount
           movb #1, TurnDurFlag ;changed from TurnFlag  ;set 5 second flag (execute turn)  clr for R and L turn
@@ -97,18 +90,19 @@ turnright:clr  LeftT
           ;not sure if needed//movb #1, MotorFlag            
           
 chkdc:    brset DCFlag, #1, DCmotor           ;if dcmotor isnt set skip the code, also skip step motor bc you cant turn if you arent moving
+          brset speakflag, #1, speaker
           lbra endrti
 
-    
+speaker: lbra speakflagbra    
 
 ;DC MOTOR     
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-DCmotor:    ;brset OilFlag, #1, endrti
+DCmotor:    brset OilFlag, #1, midendrti
             ldaa ton                      
             ldab toff
 RTon:	      
-	          inc  count
-	          ldaa count
+	          inc  mocount
+	          ldaa mocount
 	          
 	          cmpa #15         ;if counter > 15 exit
 	          bge  reset        ;~~~~~~~~~~~~~~~~
@@ -124,8 +118,9 @@ RTon:
 	          
 RToff:      bclr port_t, #$8
             movb #0, DCFlag
+            bra  Stepper
                       
-reset:      movb #0, count
+reset:      movb #0, mocount
             bra  Stepper
 
 midendrti:  bset CRGFLG, #$80
@@ -147,7 +142,8 @@ midendrti:  bset CRGFLG, #$80
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~            
 CW:	brset SlowFlag, #1, CWstart
 		brset FastFlag, #1, CWstart
-		lbra   endrti
+		brset speakflag, #1, speaker	
+		lbra  endrti
 		
 CWstart:			;indexcnt 0-3
          ldx indexcnt
@@ -156,16 +152,18 @@ CWstart:			;indexcnt 0-3
          ldaa index, x
          inx
          staa port_p
+         stx indexcnt
          clr TurnFlag
          bra RLED
 
-resetindxCW:	 ldx #0
-			 stx indexcnt
-			 bra CW
+resetindxCW:	ldx #0
+			        stx indexcnt
+			        bra CW
 	    	 
 CCW:	brset SlowFlag, #1, CCWstart
 	  	brset FastFlag, #1, CCWstart
-	  	bra   endrti		
+	  	brset speakflag, #1, speaklf
+	  	lbra   endrti		
 
 CCWstart:		;indexcnt 0-3
   ldx  indexcnt
@@ -174,6 +172,7 @@ CCWstart:		;indexcnt 0-3
   ldaa indexr, x
   inx
   staa port_p
+  stx indexcnt
   clr  TurnFlag
   bra  LLED
 
@@ -181,6 +180,7 @@ resetindxCCW:	 ldx #0
 			 stx   indexcnt
 			 bra   CCW
 
+speaklf: lbra speakflagbra
 
 
 
@@ -188,30 +188,46 @@ resetindxCCW:	 ldx #0
 		  ldaa #0
 		  ldab RLEDtmp
 		  ldx #2
-		  idiv 	 
-		  cpx  #1
-		  beq  resetledR
-		  stx  port_s		  
+		  idiv 	
+		  tfr x, d
+		  stab RLEDtmp
+		  cmpb  #1
+		  blt  resetledR
+		  cmpb  #255
+		  bgt   resetledR		  
+		  stab  port_s
+		  cmpb  #1
+		  beq   resetledR
+		  brset speakflag, #1, speakflagbra		  
 		  bra  endrti
 
 resetledR:ldaa #255
 		  staa RLEDtmp
 		  clr LEDFlag
+		  brset speakflag, #1, speakflagbra
 		  bra endrti
 		  
 	LLED: brclr LEDFlag, #1, endrti
 		  ldaa LLEDtmp
-		  ldab #2
-		  mul 
-		  cpd  #255
-		  bge  resetledL
-		  std  port_s		 
+		  ldab LLEDtmp
+		  aba 
+		  staa LLEDtmp
+		  cmpa  #255
+		  bgt  resetledL
+		  staa  port_s
+		  cmpa  #255
+		  bgt   resetledL
+		  brset speakflag, #1, speakflagbra		 
 		  bra  endrti
 
 resetledL:ldaa #1
           staa LLEDtmp
 		      clr LEDFlag
+		      brset speakflag, #1, speakflagbra
 		      bra endrti
+		      
+
+speakflagbra: 
 
 
 

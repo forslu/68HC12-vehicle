@@ -10,17 +10,17 @@
             INCLUDE 'derivative.inc'
 
 ; export symbols
-            XDEF Entry,temp_str, IndxFlag, indexcnt, RightT, LeftT, _Startup, main, ton, toff, DCFlag,  LCDFlag,mph
-            XDEF tempstring, SlowFlag, FastFlag, disp,   RTI_CTL ,RTIFLG, port_t_ddr, OdoNum, IRQFlag, port_p,DDR_p
-            XDEF  TurnFlag, ODOFlag, OilFlag, TurnDurFlag, port_s, indexr,clearLCD_str, index, LEDFlag,  secCount, sec5Count,
+            XDEF Entry,Turncnt,LEDcnt, port_t, rtiCount,temp_str, IndxFlag, indexcnt, RightT, LeftT, _Startup, main, ton, toff, DCFlag,  LCDFlag,mph
+            XDEF tempstring,port_t, SlowFlag,speakflag, FastFlag, disp,   RTI_CTL ,RTIFLG, port_t_ddr, OdoNum, IRQFlag, port_p,DDR_p
+            XDEF  LLEDtmp, RLEDtmp, TurnFlag, mocount, ODOFlag, OilFlag, TurnDurFlag, port_s, indexr,clearLCD_str, index, LEDFlag,  secCount, sec5Count,
         ;  LLED, RLED, HLED,
             XREF init_LCD, read_pot, display_string, TurnChk,   
             XREF __SEG_END_SSTACK, JUMPASS, hexval, Pbutton ,RTI_ISR, ODOCount
             ;  TurnFlag, TurnDurFlag, SLCDCrash  
-            XREF pot_value, speed_str, GetSpd,  SendsChr.c, rtiCount
+            XREF pot_value, speed_str, GetSpd,  SendsChr.c
            ;  sum
-            XREF potentiometer.c, LCD, wrongpass_str, buttpass_str, LLEDtmp, RLEDtmp
-            XREF port_t, Left_str, Right_str, crash_str, chngoil_str,  string_copy
+            XREF potentiometer.c, LCD, wrongpass_str, buttpass_str, 
+            XREF  Left_str, Right_str, crash_str, chngoil_str,  string_copy
             XREF pass1_str, pass11_str, pass111_str, pass1111_str, 
 	         
 
@@ -40,16 +40,24 @@ passkey:        ds.b  4
 ;LLED:           ds.b  1 
 ;RLED:           ds.b  1
 ;HLED:           ds.b  1
-indexcnt:       ds.b  1
+indexcnt:       ds.w  1
+speakflag:      ds.b  1
+
 IndxFlag:       ds.b  1
 RightT:         ds.b  1
 LeftT:          ds.b  1
 FastFlag:       ds.b  1
+LEDcnt:		   ds.b 1
+
+Turncnt:	   ds.b 1
 SlowFlag:       ds.b  1
 IRQFlag:        ds.b  1
 LCDFlag:        ds.b  1
 LEDFlag:        ds.b 1
+RLEDtmp:       ds.b 1 
+LLEDtmp:	     ds.b 1
 DCFlag:         ds.b  1
+mocount:       ds.b 1
 OilFlag      ds.b 1
 ODOFlag      ds.b 1
 TurnFlag     ds.b 1
@@ -60,6 +68,7 @@ ton:            ds.b  1
 toff:           ds.b  1
 mph:            ds.b  1
 OdoNum:         ds.w  1
+rtiCount:    ds.w 1
 ;DCount:         ds.b  1
 disp:	          ds.b 33
 temp_str:       ds.b 33
@@ -72,6 +81,7 @@ enterpass_str   dc.b  ' Enter Password                 ',0
 RTIFLG:     equ  $0037
 RGINT:      equ  $0038  
 RTI_CTL:    equ  $003B
+port_t:     equ  $240
 port_s:     equ  $248
 DDR_S:      equ  $24A
 port_t_ddr: equ  $242
@@ -102,16 +112,26 @@ main:
             movb  #$1E, DDR_p
             movb  #$FF, DDR_S
             movb  #$FC, port_t_ddr     ;OR bset port_t_ddr, #$8	 ;set bit 3 of port t
+            
             clr   IRQFlag
 reset:      ldd   #0            
             std   OdoNum
-            ;std   rtiCount
-            ;ldaa  #$FF
-		      ;	staa  RLEDtmp
+            std   rtiCount
+            std  indexcnt
+            ldaa  #$FF
+		        staa  RLEDtmp
 		      	ldaa  #0
-		      ;	staa  LLEDtmp
+		      	staa  rtiCount
+		      	staa  LEDcnt	
+		      	
+		        staa	Turncnt
 		        staa  mph
-            staa  indexcnt
+            
+            ldaa  #1
+            
+		      	staa  LLEDtmp
+            clr   ton
+            clr   toff
             clr   LEDFlag
             clr   IndxFlag
             clr   DCFlag
@@ -120,6 +140,10 @@ reset:      ldd   #0
             clr   OilFlag
             clr   ODOFlag
             clr   TurnDurFlag
+            clr   speakflag
+            clr   SlowFlag
+            clr   FastFlag
+            clr   mocount
             clr   TurnFlag
             clr   secCount
             clr   sec5Count
@@ -262,8 +286,8 @@ Push2strt:  ldx   #buttpass_str      ;call LCD to display "press button to start
             
 
 chngoill:   bclr  port_t, #$8
-            ldd   #0
-            std   OdoNum
+            ;ldd   #0
+            ;std   OdoNum
             ldx   #chngoil_str
             jsr   LCD
             lbra  GetOilPass

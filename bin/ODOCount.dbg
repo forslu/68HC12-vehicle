@@ -7,11 +7,13 @@
  code:    section
 
 
-ODOCount:          ;brclr ODOFlag, #1, ChangeOilNow
-                   brset OilFlag, #1, return
+ODOCount:          brset OilFlag, #1, ChangeOilNow
+                   brclr ODOFlag, #1, return
+                  
                    ldd #0                 
                    ldab mph            ;load mph
                    addd OdoNum        ;add to Odometer
+                   std  OdoNum
                    cpd #2999        ;compare to 3000
                    ble  return        ;if less than bra return
                                       ;if greater
@@ -22,7 +24,7 @@ ODOCount:          ;brclr ODOFlag, #1, ChangeOilNow
                  
                  
 
-return:          std OdoNum
+return:          
                  
 ChangeOilNow:    clr  ODOFlag
                  rts

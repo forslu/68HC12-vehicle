@@ -7326,7 +7326,7 @@ index:        dc.b   $EB, $77, $7B, $7D, $B7, $BB, $BD, $D7, $DB, $DD, $E7, $ED,
 
 vars:   SECTION
 temp    ds.b   1
-loop:   ds.b   1
+;loop:   ds.b   1
 hexval: ds.b   1
 
 ; code section

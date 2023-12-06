@@ -1,5 +1,5 @@
 *** EVALUATION ***
-PROGRAM "C:\Users\sekefors\Desktop\Seth Forslund Final (6.3 Base) Monday night\bin\Project.abs"
+PROGRAM "C:\Users\sekefors\Desktop\Seth Forslund Final (6.3 Base) submission\bin\Project.abs"
 
 *********************************************************************************************
 TARGET SECTION
@@ -318,14 +318,14 @@ my_variable                      141   R/W      0x502      0x58E   RAM
 MY_EXTENDED_RAM                   21     R     0xC5DF     0xC5F3   ROM_C000
 vars                               2   R/W      0x591      0x592   RAM
 code                              46     R     0xC5F4     0xC621   ROM_C000
-mycode                           446     R     0xC622     0xC7DF   ROM_C000
-My_Code                           55     R     0xC7E0     0xC816   ROM_C000
+mycode                           460     R     0xC622     0xC7ED   ROM_C000
+My_Code                           55     R     0xC7EE     0xC824   ROM_C000
 My_Var                             2   R/W      0x593      0x594   RAM
 .vectSeg273_vect                   4     R     0xFFF0     0xFFF3   .vectSeg273
 .vectSeg274_vect                   2     R     0xFFFE     0xFFFF   .vectSeg274
 
 Summary of section sizes per section type:
-READ_ONLY (R):         81D (dec:     2077)
+READ_ONLY (R):         82B (dec:     2091)
 READ_WRITE (R/W):      195 (dec:      405)
 NO_INIT (N/I):         160 (dec:      352)
 
@@ -334,7 +334,7 @@ VECTOR-ALLOCATION SECTION
     Address     InitValue   InitFunction
 ---------------------------------------------------------------------------------------------
      0xFFF0        0xC622   RTI_ISR
-     0xFFF2        0xC7DA   IRQ
+     0xFFF2        0xC7E8   IRQ
      0xFFFE        0xC000   _Startup
 
 *********************************************************************************************
@@ -384,7 +384,7 @@ MODULE:                 -- main.asm.o --
      LEDFlag                                    516       1       1       6   my_variable 
      RLEDtmp                                    517       1       1       4   my_variable 
      LLEDtmp                                    518       1       1       5   my_variable 
-     DCFlag                                     519       1       1       5   my_variable 
+     DCFlag                                     519       1       1       4   my_variable 
      mocount                                    51A       1       1       4   my_variable 
      OilFlag                                    51B       1       1      10   my_variable 
      ODOFlag                                    51C       1       1       4   my_variable 
@@ -768,27 +768,28 @@ MODULE:                 -- RTI.asm.o --
      chkdc                                     C6A4       E      14       0   mycode      
      speaker                                   C6B2       4       4       0   mycode      
      DCmotor                                   C6B6      22      34       0   mycode      
-     RToff                                     C6D8       B      11       0   mycode      
-     reset                                     C6E3       7       7       0   mycode      
-     midendrti                                 C6EA       4       4       0   mycode      
-     Stepper                                   C6EE      14      20       0   mycode      
-     CW                                        C702      13      19       0   mycode      
-     CWstart                                   C715      18      24       0   mycode      
-     resetindxCW                               C72D       8       8       0   mycode      
-     CCW                                       C735      13      19       0   mycode      
-     CCWstart                                  C748      18      24       0   mycode      
-     resetindxCCW                              C760       8       8       0   mycode      
-     speaklf                                   C768       4       4       0   mycode      
-     RLED                                      C76C      2A      42       0   mycode      
-     resetledR                                 C796       F      15       0   mycode      
-     LLED                                      C7A5      22      34       0   mycode      
-     resetledL                                 C7C7       F      15       0   mycode      
-     endrti                                    C7D6       4       4       0   mycode      
-     speakflagbra                              C7D6       0       0       0   mycode      
+     RToff                                     C6D8       8       8       0   mycode      
+     reset                                     C6E0       7       7       0   mycode      
+     midendrti                                 C6E7       4       4       0   mycode      
+     Stepper                                   C6EB      14      20       0   mycode      
+     CW                                        C6FF      13      19       0   mycode      
+     CWstart                                   C712      18      24       0   mycode      
+     resetindxCW                               C72A       8       8       0   mycode      
+     CCW                                       C732      13      19       0   mycode      
+     CCWstart                                  C745      18      24       0   mycode      
+     resetindxCCW                              C75D       8       8       0   mycode      
+     speaklf                                   C765       4       4       0   mycode      
+     RLED                                      C769      2A      42       0   mycode      
+     resetledR                                 C793       F      15       0   mycode      
+     LLED                                      C7A2      22      34       0   mycode      
+     resetledL                                 C7C4       F      15       0   mycode      
+     speakflagbra                              C7D3       4       4       0   mycode      
+     loaddata                                  C7D7       D      13       0   mycode      
+     endrti                                    C7E4       4       4       0   mycode      
 - VARIABLES:
 MODULE:                 -- IRQ.asm.o --
 - PROCEDURES:
-     IRQ                                       C7DA       6       6       0   mycode      
+     IRQ                                       C7E8       6       6       0   mycode      
 - VARIABLES:
 MODULE:                 -- ODOCount.asm.o --
 - PROCEDURES:
@@ -798,10 +799,10 @@ MODULE:                 -- ODOCount.asm.o --
 - VARIABLES:
 MODULE:                 -- Switch.asm.o --
 - PROCEDURES:
-     TurnChk                                   C7E0      20      32       1   My_Code     
-     Fastturn                                  C800       F      15       0   My_Code     
-     return                                    C80F       1       1       0   My_Code     
-     noturn                                    C810       7       7       0   My_Code     
+     TurnChk                                   C7EE      20      32       1   My_Code     
+     Fastturn                                  C80E       F      15       0   My_Code     
+     return                                    C81D       1       1       0   My_Code     
+     noturn                                    C81E       7       7       0   My_Code     
 - VARIABLES:
      SlowTFlag                                  593       1       1       3   My_Var      
      FastTFlag                                  594       1       1       3   My_Var      
@@ -818,7 +819,7 @@ MODULE STATISTIC
   Hex Pad.asm.o                                2     94     21
   PB.asm.o                                     0      8      0
   Pot.asm.o                                    0    153      0
-  RTI.asm.o                                    0    440      0
+  RTI.asm.o                                    0    454      0
   IRQ.asm.o                                    0      6      0
   ODOCount.asm.o                               0     38      0
   Switch.asm.o                                 2     55      0
@@ -1406,7 +1407,8 @@ SECTION: "code"
 SECTION: "mycode"
   RTI_ISR chkled checksec clearDurflag setoil skipodo turnright chkdc speaker 
   DCmotor RToff reset midendrti Stepper CW CWstart resetindxCW CCW CCWstart 
-  resetindxCCW speaklf RLED resetledR LLED resetledL speakflagbra endrti IRQ 
+  resetindxCCW speaklf RLED resetledR LLED resetledL speakflagbra loaddata 
+  endrti IRQ 
 SECTION: "My_Code"
   TurnChk Fastturn return noturn 
 SECTION: "My_Var"
@@ -1713,7 +1715,7 @@ OBJECT LIST SORTED BY ADDRESS
      LEDFlag                                    516       1       1       6   my_variable 
      RLEDtmp                                    517       1       1       4   my_variable 
      LLEDtmp                                    518       1       1       5   my_variable 
-     DCFlag                                     519       1       1       5   my_variable 
+     DCFlag                                     519       1       1       4   my_variable 
      mocount                                    51A       1       1       4   my_variable 
      OilFlag                                    51B       1       1      10   my_variable 
      ODOFlag                                    51C       1       1       4   my_variable 
@@ -1820,28 +1822,29 @@ OBJECT LIST SORTED BY ADDRESS
      chkdc                                     C6A4       E      14       0   mycode      
      speaker                                   C6B2       4       4       0   mycode      
      DCmotor                                   C6B6      22      34       0   mycode      
-     RToff                                     C6D8       B      11       0   mycode      
-     reset                                     C6E3       7       7       0   mycode      
-     midendrti                                 C6EA       4       4       0   mycode      
-     Stepper                                   C6EE      14      20       0   mycode      
-     CW                                        C702      13      19       0   mycode      
-     CWstart                                   C715      18      24       0   mycode      
-     resetindxCW                               C72D       8       8       0   mycode      
-     CCW                                       C735      13      19       0   mycode      
-     CCWstart                                  C748      18      24       0   mycode      
-     resetindxCCW                              C760       8       8       0   mycode      
-     speaklf                                   C768       4       4       0   mycode      
-     RLED                                      C76C      2A      42       0   mycode      
-     resetledR                                 C796       F      15       0   mycode      
-     LLED                                      C7A5      22      34       0   mycode      
-     resetledL                                 C7C7       F      15       0   mycode      
-     speakflagbra                              C7D6       0       0       0   mycode      
-     endrti                                    C7D6       4       4       0   mycode      
-     IRQ                                       C7DA       6       6       0   mycode      
-     TurnChk                                   C7E0      20      32       1   My_Code     
-     Fastturn                                  C800       F      15       0   My_Code     
-     return                                    C80F       1       1       0   My_Code     
-     noturn                                    C810       7       7       0   My_Code     
+     RToff                                     C6D8       8       8       0   mycode      
+     reset                                     C6E0       7       7       0   mycode      
+     midendrti                                 C6E7       4       4       0   mycode      
+     Stepper                                   C6EB      14      20       0   mycode      
+     CW                                        C6FF      13      19       0   mycode      
+     CWstart                                   C712      18      24       0   mycode      
+     resetindxCW                               C72A       8       8       0   mycode      
+     CCW                                       C732      13      19       0   mycode      
+     CCWstart                                  C745      18      24       0   mycode      
+     resetindxCCW                              C75D       8       8       0   mycode      
+     speaklf                                   C765       4       4       0   mycode      
+     RLED                                      C769      2A      42       0   mycode      
+     resetledR                                 C793       F      15       0   mycode      
+     LLED                                      C7A2      22      34       0   mycode      
+     resetledL                                 C7C4       F      15       0   mycode      
+     speakflagbra                              C7D3       4       4       0   mycode      
+     loaddata                                  C7D7       D      13       0   mycode      
+     endrti                                    C7E4       4       4       0   mycode      
+     IRQ                                       C7E8       6       6       0   mycode      
+     TurnChk                                   C7EE      20      32       1   My_Code     
+     Fastturn                                  C80E       F      15       0   My_Code     
+     return                                    C81D       1       1       0   My_Code     
+     noturn                                    C81E       7       7       0   My_Code     
 
 *********************************************************************************************
 UNUSED-OBJECTS SECTION
@@ -1909,7 +1912,7 @@ skipodo                   USES secCount sec5Count TurnDurFlag LeftT RightT
 turnright                 USES LeftT RightT 
 chkdc                     USES DCFlag speakflag 
 DCmotor                   USES OilFlag ton toff mocount port_t 
-RToff                     USES port_t DCFlag 
+RToff                     USES port_t 
 reset                     USES mocount 
 Stepper                   USES TurnFlag TurnDurFlag RightT LeftT 
 CW                        USES SlowFlag FastFlag speakflag 
@@ -1946,6 +1949,6 @@ STATISTIC SECTION
 
 ExeFile:
 --------
-Number of blocks to be downloaded: 10
-Total size of all blocks to be downloaded: 2077
+Number of blocks to be downloaded: 9
+Total size of all blocks to be downloaded: 2091
 

@@ -117,8 +117,8 @@ RTon:
 	    
 	          
 RToff:      bclr port_t, #$8
-            movb #0, DCFlag
-            bra  Stepper
+            ;movb #0, DCFlag
+            lbra  endrti
                       
 reset:      movb #0, mocount
             bra  Stepper
@@ -230,10 +230,10 @@ resetledL:ldaa #1
 speakflagbra: bra endrti
 	SendMessageInfo:	ldy 3,sp
 		
-ldx 5,sp
+;ldx 5,sp
 loaddata:	ldaa 1,x+
 		psha
-		call SendsChr
+	;	call SendsChr
 		leas 1,sp
 		dey
 		cpy #0

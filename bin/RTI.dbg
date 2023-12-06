@@ -1,7 +1,7 @@
  ;RTI_ISR
                
  XDEF RTI_ISR, sum, rtiCount, port_t, secCount, sec5Count, TurnFlag, OilFlag, TurnDurFlag, DCount, ODOFlag
- XREF ton, toff, DCFlag, RTI_CTL,  port_t_ddr,
+ XREF ton, toff, DCFlag, RTI_CTL,  port_t_ddr, IRQFlag
  
 Const:    section
 CRGFLG:     equ  $37 
@@ -32,7 +32,7 @@ RTI_ISR:
    
 ;NOTICE: Potentially need to move flag checks here.to branch to them.
           
-          
+          ;brset IRQFlag, #1, endrti
           ldd rtiCount
           incb
           std rtiCount
@@ -44,10 +44,11 @@ RTI_ISR:
 ;setting second flags 
           
           movb #1, TurnDurFlag   ;set second flag (execute at 1 second: turn duration(stepper)  
+          brset OilFlag, #1, skipodo
           movb #1, ODOFlag               ;ODO flag count miles
           ;movb #1, OilFlag                      ;Blinker duration (LED)
           
-          ldaa secCount
+skipodo:  ldaa secCount
           cmpa #5
           bne  endrti
           inc  sec5Count
@@ -61,9 +62,10 @@ RTI_ISR:
           
           
 
-;WIP//DC MOTOR     do i put this in rti or dcmotor.asm
+;DC MOTOR     do i put this in rti or dcmotor.asm
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-DCmotor:    ldaa ton                      
+DCmotor:    ;brset OilFlag, #1, endrti
+            ldaa ton                      
             ldab toff
 RTon:	      
 	          inc  count

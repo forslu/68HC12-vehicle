@@ -14,13 +14,15 @@ ODOCount:          brclr ODOFlag, #1, ChangeOilNow
                    addd OdoNum        ;add to Odometer
                    cpd #2999        ;compare to 3000
                    ble  return        ;if less than bra return
-                   movb #1, OilFlag    ;if greater
-                   clr  ODOFlag        ;set OilFlag 
+                                      ;if greater
+                   movb #1, OilFlag     ;set OilFlag
+                  ; clr  ODOFlag         
                    bra ChangeOilNow
              
                  
                  
 
-return:          staa OdoNum
-                 clr  ODOFlag
-ChangeOilNow:    rts
+return:          std OdoNum
+                 
+ChangeOilNow:    clr  ODOFlag
+                 rts

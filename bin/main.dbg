@@ -7303,15 +7303,15 @@ mPMFDTMC_PMFDTMC11:                      equ        This_symb_has_been_depreciat
 
 ; export symbols
             XDEF Entry, _Startup, main, ton, toff, DCFlag,  LCDFlag,mph
-            XDEF tempstring, RTI_CTL ,RTIFLG, port_t_ddr, OdoNum
+            XDEF tempstring, RTI_CTL ,RTIFLG, port_t_ddr, OdoNum, IRQFlag
           
             XREF init_LCD, read_pot, display_string,    
             XREF __SEG_END_SSTACK, JUMPASS, hexval, Pbutton ,RTI_ISR, ODOCount
             ; Swich, TurnFlag, TurnDurFlag, SLCDCrash  
             XREF pot_value, speed_str, GetSpd,  SendsChr.c, secCount, sec5Count, rtiCount
            ;  sum
-            XREF potentiometer.c, LCD, enterpass_str, wrongpass_str, buttpass_str
-            XREF Left_str, Right_str, crash_str, chngoil_str, disp, clearLCD_str, string_copy
+            XREF potentiometer.c, ODOFlag, LCD, enterpass_str, wrongpass_str, buttpass_str
+            XREF Left_str,port_t, Right_str, crash_str, chngoil_str, disp, OilFlag, clearLCD_str, string_copy
           
 	         
 
@@ -7328,7 +7328,7 @@ my_variable: SECTION
 
 passtemp:       ds.b  4
 passkey:        ds.b  4
-OilFlag:        ds.b  1
+IRQFlag:        ds.b  1
 LCDFlag:        ds.b  1
 DCFlag:         ds.b  1
 ton:            ds.b  1
@@ -7363,13 +7363,14 @@ main:
             movb  #$80, RGINT
             movb  #$60, RTI_CTL
             movb  #$8, port_t_ddr     ;OR bset port_t_ddr, #$8	 ;set bit 3 of port t
-            ldd   #0
+reset:      ldd   #0
             std   OdoNum
             std   rtiCount
             clr   OilFlag
+            clr   ODOFlag
             clr   secCount
             clr   sec5Count
-            
+            brset IRQFlag, #1, WrongPass
     ;clear LCD        
             ldx   #clearLCD_str
             ldy   #disp
@@ -7377,27 +7378,30 @@ main:
             jsr   string_copy
             ldd   #disp
             jsr   display_string
-            
+           
             
                 
 Start:        
             
-           ; brset OilFlag, #1, GetOilPass
+            brset OilFlag, #1, GetOilPass
             
             ldx  #enterpass_str   ;call LCD to display               
             jsr  LCD
 
-WrongPass:  ldx  #0
-GetPass:    
-            jsr  JUMPASS     ;call keypad for password
-            ldaa hexval     ;load keypad value to a
-            staa passtemp, x   ;store keypad val to passtemp
+WrongPass:  ldx   #0
+            brset OilFlag, #1, GetOilPass
+GetPass:    clr   IRQFlag
+            jsr   JUMPASS     ;call keypad for password
+            ldaa  hexval     ;load keypad value to a
+            staa  passtemp, x   ;store keypad val to passtemp
             inx              ;
-            cpx  #4
-            bne  GetPass
-            bra  CompPass
+            cpx   #4
+            bne   GetPass
+            bra   CompPass
 
-GetOilPass: ldx #0
+GetOilPass: ldx  #0
+            stx  OdoNum
+           
 Oilloop:    jsr  JUMPASS     ;call keypad for password
             ldaa hexval     ;load keypad value  to a
             staa passtemp, x   ;store keypad val to passtemp
@@ -7440,50 +7444,57 @@ chkloop:    cpx   #4
             
 GoodPass:   ;WIP//jsr HappySound                  ;speaker for correct
             brclr OilFlag, #1, Push2strt             ;bra to push2start if oilflag is clear (didnt change oil)
-            movb  #0, OilFlag
-            bra   Start
+            clr   OilFlag
+            lbra   Start
                       
 BadPass:    ;WIP//jsr SadSound                  ;speaker for incorrect 
             ldx   #wrongpass_str            ;call LCD to display "wrong password"
             jsr   LCD           
             lbra  WrongPass          ;return to start 
                       
-Push2strt:  ldx   #buttpass_str    ;call LCD to display "press button to start"
+Push2strt:  ldx   #buttpass_str      ;call LCD to display "press button to start"
             jsr   LCD 
-            jsr   Pbutton       ;button to start
+            jsr   Pbutton            ;button to start
 
             
                       
                            
 
 
-;POT
+;RUN CAR
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   StartCar: cli
+            brset IRQFlag,#1, crash 
             jsr GetSpd
-          
-            
-       
-            
-            
+                   
             jsr LCD
             jsr ODOCount
             
      ;check oil flag      
-            ldaa OilFlag
-            cmpa #1
-            lbeq GetOilPass 
-            ;brset OilFlag, #1, GetOilPass
+            brset OilFlag, #1, chngoill ;ldaa OilFlag    ;long brset 
+           ; cmpa #1
+           ; lbeq GetOilPass 
+                            ;brset OilFlag, #1, GetOilPass
             
             bra StartCar
             
 
+chngoill:  bclr port_t, #$8
+           ldd  #0
+           std  OdoNum
+           ldx  #chngoil_str
+           jsr  LCD
+           lbra GetOilPass
 
-
-
-
-
-
+crash:     bclr port_t, #$8    ;stop dcmotor
+                           ;stop stepper
+           ldx #crash_str
+           jsr LCD
+          ; ldaa #0
+           ;staa ton
+           ;staa toff
+          
+           lbra reset
 
 
 

@@ -14,16 +14,16 @@ wun:      ds.w 1
 my_constant: SECTION
 ;LCD Strings
 clearLCD_str    dc.b  '                                 ',0
-enterpass_str   dc.b  'Enter Password                   ',0
-wrongpass_str   dc.b  'Incorrect Password               ',0
-buttpass_str    dc.b  'Push button to  start            ',0
+enterpass_str   dc.b  'Enter Password  to buckle up     ',0
+wrongpass_str   dc.b  'Wrong Password                   ',0
+buttpass_str    dc.b  'Fancy Car:      Push to start    ',0
 speed_str       dc.b  'Speed is:    mph                 ',0
 Left_str        dc.b  'Left Turn                        ',0
 Right_str       dc.b  'Right Turn                       ',0
-crash_str       dc.b  'Oopsie we crash, enter pass      ',0
-chngoil_str     dc.b  'Oopsie no oil, enter pass        ',0
-                
-
+crash_str       dc.b  'Oopsie we crash,enter pass       ',0
+chngoil_str     dc.b  'Oopsie no oil   enter pass       ',0
+                                     ;|
+                                     ;^screen newline
 
 
 ; code section
@@ -79,24 +79,21 @@ Dispeed:
 
 	  stx 	ten
 		
-	;NOTE FOR THURSDAY NIGHT, NEED TO FIGURE OUT HOW TO ADD SPEED TO STRING	
-wuns: std 	wun
-		ldd 	#0
-		ldd 	ten
-		addd 	#$30
-		stab 	disp + 10
-		ldd 	#0
-		ldd 	wun
-		addd 	#$30
-		stab 	disp + 11	
-
-	
-	
 		
-	  ldd #disp
-	  jsr display_string
-		movb  #0, DCFlag
-	  rts
+wuns: std 	wun
+	  	ldd 	#0
+	  	ldd 	ten
+	  	addd 	#$30
+	  	stab 	disp + 10
+	  	ldd 	#0
+	  	ldd 	wun
+	  	addd 	#$30
+	  	stab 	disp + 11	
+		
+	    ldd #disp
+	    jsr display_string
+	  	movb  #0, DCFlag
+	    rts
 
 
 

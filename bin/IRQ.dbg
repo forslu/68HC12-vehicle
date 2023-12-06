@@ -1,5 +1,5 @@
    XDEF IRQ
-
+   XREF crash_str, LCD, port_t, IRQFlag,ton, toff
 
 myconst:       section
 
@@ -11,8 +11,6 @@ mycode:   section
     
    
     
-    
-    
-    
-    
-IRQ:      
+IRQ:       
+       movb #1, IRQFlag         
+       rti

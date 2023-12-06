@@ -1,9 +1,7 @@
- XDEF Entry, _Startup
-            ; we use export 'Entry' as symbol. This allows us to
-            ; reference 'Entry' either in the linker .prm file
-            ; or from C/C++ later on
+ XDEF LCDFlag, LCD
+           
 
-            XREF __SEG_END_SSTACK, init_LCD, display_string
+ XREF __SEG_END_SSTACK, init_LCD, display_string
 
 ;*********************string initializations*********************
            ;intializing string "disp" to be:
@@ -48,8 +46,7 @@
 my_variable: SECTION
 disp:	ds.b 33
 
-; code section
-MyCode:     SECTION
+LCD:
 		lds #__SEG_END_SSTACK
 
 

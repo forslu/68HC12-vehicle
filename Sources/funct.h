@@ -1,6 +1,6 @@
 #ifndef FUNCT_H
 #define FUNCT_H
-
+#pragma CODE_SEG NON_BANKED
 #define LCDDATA       PTADHi
 #define LCDDATADDR    DDRADHi
 #define LCDCONTROLDDR DDRM
@@ -20,5 +20,8 @@ void Delay(unsigned int);
 void delay_ms(int);
 void epulse(void);
 void sendCommand(int);
+
+void SendsChr(char, int);
+void PlayTone(void);
 
 #endif

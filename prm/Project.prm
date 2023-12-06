@@ -13,7 +13,7 @@ SEGMENTS  /* Here all RAM/ROM areas of the device are listed. Used in PLACEMENT 
       ROM_4000      = READ_ONLY     0x4000 TO   0x7FFF;
       ROM_C000      = READ_ONLY     0xC000 TO   0xFEFF;
  /*   VECTORS       = READ_ONLY     0xFF00 TO   0xFFFF; intentionally not defined: used for VECTOR commands below */
-   //OSVECTORS      = READ_ONLY     0xFF8C TO   0xFFFF;   /* OSEK interrupt vectors (use your vector.o) */
+   //OSVECTORS      = READ_ONLY     0xFF88 TO   0xFFFF;   /* OSEK interrupt vectors (use your vector.o) */
 
 /* paged FLASH:                     0x8000 TO   0xBFFF; addressed through PPAGE */
       PAGE_38       = READ_ONLY   0x388000 TO 0x38BFFF;
@@ -33,14 +33,14 @@ PLACEMENT /* here all predefined and user segments are placed into the SEGMENTS 
       STRINGS,                /* string literals */
       VIRTUAL_TABLE_SEGMENT,  /* C++ virtual table segment */
     //.ostext,                /* OSEK */
-      DEFAULT_ROM, NON_BANKED,             /* runtime routines which must not be banked */
+      NON_BANKED,DEFAULT_ROM,             /* runtime routines which must not be banked */
       COPY                    /* copy down information: how to initialize variables */
                               /* in case you want to use ROM_4000 here as well, make sure
                                  that all files (incl. library files) are compiled with the
                                  option: -OnB=b */
                         INTO  ROM_C000/*, ROM_4000*/;
 
-      OTHER_ROM         INTO  PAGE_38, PAGE_39, PAGE_3A, PAGE_3B, PAGE_3C, PAGE_3D                  ;
+          OTHER_RAM   INTO  PAGE_38, PAGE_39, PAGE_3A, PAGE_3B, PAGE_3C, PAGE_3D                  ;
 
     //.stackstart,            /* eventually used for OSEK kernel awareness: Main-Stack Start */
       SSTACK,                 /* allocate stack first to avoid overwriting variables on overflow */
@@ -57,7 +57,10 @@ END
 
 STACKSIZE 0x100
 
-VECTOR 0 _Startup /* reset vector: this is the default entry point for a C/C++ application. */
-//VECTOR 0 Entry  /* reset vector: this is the default entry point for an Assembly application. */
-//INIT Entry      /* for assembly applications: that this is as well the initialization entry point */
+//VECTOR 0 _Startup /* reset vector: this is the default entry point for a C/C++ application. */
+VECTOR 0 Entry  /* reset vector: this is the default entry point for an Assembly application. */
+INIT Entry      /* for assembly applications: that this is as well the initialization entry point */
+VECTOR 6 IRQ_ISR
+VECTOR 7 RTI_ISR
+
 

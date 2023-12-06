@@ -40,7 +40,7 @@ sortpot:      ldd  pot_value         ;is pot_value 0
               movb  #4,  ton      ;ton = 4
               movb  #11, toff     ;toff = 11
               movb  #1,  SlowFlag                     ;slowflag set
-              movb  #1,  FastFlag
+              clr   FastFlag
               bra   PotFound       ;bra pot                 
                             
                                    

@@ -4,7 +4,7 @@
 	
 My_Constant:    section
 
-;FastTFlag and SlowTFlag are used to 
+
 
 
 My_Var:    section
@@ -19,29 +19,26 @@ TurnChk:       ;brclr TurnFlag, #1, return
                anda #3
                
                cmpa #0              ;turning disabled if 00 
-               beq  noturn
+               beq  return
                
                cmpa #3              ;disabled if 11
-               beq  noturn
+               beq  return
                
                cmpa #2                ;fast turn if 10
                beq  Fastturn
 
 SlowTurn:      brclr SlowFlag, #1,return   ;fall into slowturn, branch if slowflag is cleared
-               movb  #1, SlowTFlag         ;if slowflag is set, set slowturnflag               
-              ; jsr   Stepper
-               clr   FastTFlag
-               ;clr   TurnFlag                  ;clear turn flag
+              ; movb  #1, SlowTFlag         ;if slowflag is set, set slowturnflag               
+               jsr   Stepper
+               clr   SlowTFlag
+               clr   TurnFlag                  ;clear turn flag
                bra   return
 
-Fastturn:     brclr FastFlag, #1, return    ;branched to fasturn,leave if fastflag is cleared
-	      movb  #1, FastTFlag           ;if set, set the fastturnflag
-              ; jsr   Stepper
-               clr   SlowTFlag             
-              ; clr   TurnFlag         
+Fastturn:      brclr FastFlag, #1, return     ;branched to fasturn,leave if fastflag is cleared
+             ;  movb  #1, FastTFlag           ;if set, set the fastturnflag
+               jsr   Stepper
+               clr   FastTFlag             
+               clr   TurnFlag         
                bra   return
-
-return:	       rts
       
-noturn:        movb #1, noturn  
-	       rts
+return:        rts

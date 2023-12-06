@@ -1,9 +1,9 @@
 
 ;stepper.asm
-            XDEF fdelay,sdelay, Stepper, 
+            XDEF fdelay,sdelay, port_p, Stepper
            
-            XREF port_t, SlowTFlag, FastTFlag, IndxFlag, port_s, DDR_S   
-            XREF RightT, LeftT, TurnFlag, indexcnt, TurnDurFlag, port_p,DDR_p
+            XREF port_t, SlowTFlag, FastTFlag, IndxFlag, port_s   
+            XREF RightT, LeftT, TurnFlag, indexcnt, TurnDurFlag
 
 
 
@@ -11,8 +11,8 @@ CONSTANTS:  SECTION
 index:      	dc.b 	  $0A,$12,$14,$0C,$0
 indexr:       dc.b 	  $0C,$14,$12,$0A,$0
 
-;port_p: 	   	equ     $258
-;DDR_p:        equ     $25A
+port_p: 	   	equ     $258
+DDR_p:        equ     $25A
 ;port_t:       equ     $240
 
 
@@ -31,7 +31,7 @@ resetx:   ldaa #4
    ;check x at the very beginning of Stepper if it is 
    ;4 then branch up to reset x above
     
-Stepper:    ;movb #$1E, DDR_p
+Stepper:    movb #$1E, DDR_p
             brclr TurnDurFlag, #1, topreturn
            ; brclr TurnFlag, #1, topreturn
 

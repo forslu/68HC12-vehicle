@@ -11,8 +11,8 @@
 
 ; export symbols
             XDEF Entry, IndxFlag, indexcnt, RightT, LeftT, _Startup, main, ton, toff, DCFlag,  LCDFlag,mph
-            XDEF tempstring, SlowFlag, FastFlag,  RTI_CTL ,RTIFLG, port_t_ddr, OdoNum, IRQFlag, port_p,DDR_p
-            XDEF LLED, RLED, HLED, port_s, indexr, index
+            XDEF tempstring, SlowFlag, FastFlag,  RTI_CTL ,RTIFLG, port_t_ddr, OdoNum, IRQFlag
+            XDEF LLED, RLED, HLED, port_s
           
             XREF init_LCD, read_pot, display_string, TurnChk,   
             XREF __SEG_END_SSTACK, JUMPASS, hexval, Pbutton ,RTI_ISR, ODOCount
@@ -37,9 +37,12 @@ my_variable: SECTION
 
 passtemp:       ds.b  4
 passkey:        ds.b  4
+
 LLED:           ds.b  1 
 RLED:           ds.b  1
 HLED:           ds.b  1
+port_s:         ds.b  1
+DDR_S:          ds.b  1
 indexcnt:       ds.b  1
 IndxFlag:       ds.b  1
 RightT:         ds.b  1
@@ -61,19 +64,11 @@ my_constant: SECTION
 RTIFLG:     equ  $0037
 RGINT:      equ  $0038  
 RTI_CTL:    equ  $003B
-port_s:     equ  $248
-DDR_S:      equ  $24A
-port_t_ddr: equ  $242
-port_p:     equ  $258
-DDR_p:      equ  $25A
-index:      dc.b  $0A,$12,$14,$0C,$0
-indexr:     dc.b  $0C,$14,$12,$0A,$0
-
 
 constant_string dc.b  'The value of the pot is:        ',0
 strtpass        dc.b   $1, $2, $3, $4
 oilpass         dc.b   $1, $2, $3
-
+port_t_ddr:     equ    $242
 
 
 ; code section
@@ -83,22 +78,18 @@ _Startup:
 main:
             ;movb #$8, port_t_ddr     ;OR bset port_t_ddr, #$8	 ;set bit 3 of port t 
             ;bset port_t, #$8    ;set motor
-            lds #__SEG_END_SSTACK			;initializes stack pointer	
+          	lds #__SEG_END_SSTACK			;initializes stack pointer	
             movb  #0, LCDFlag
             movb  #$C0, INTCR
             movb  #$80, RGINT
             movb  #$40, RTI_CTL
-            movb  #$1E, DDR_p
             movb  #$FF, DDR_S
             movb  #$FC, port_t_ddr     ;OR bset port_t_ddr, #$8	 ;set bit 3 of port t
             clr   IRQFlag
 reset:      ldd   #0            
             std   OdoNum
             std   rtiCount
-            ldaa  #$FF
-			staa  RLEDtmp
-			ldaa  #0
-			staa  LLEDtmp
+            ldaa  #4
             staa  indexcnt
             clr   IndxFlag
             clr   OilFlag
@@ -129,33 +120,9 @@ GetPass:    clr   IRQFlag
             jsr   JUMPASS     ;call keypad for password
             ldaa  hexval     ;load keypad value to a
             staa  passtemp, x   ;store keypad val to passtemp
-			
-			
-			
-;Fill*	    ;WIP//cpx #1
-			;bne pass**
-	        ;ldx pass*_str
-			;jsr LCD
-			;inx
-			;bra GetPass
-			
-;pass**		;cpx #2
-			;bne pass***
-			;ldx pass**_str
-			;jsr LCD
-			;inx
-			;bra GetPass
-			
-;pass***    cpx #3
-			;bne next
-			;ldx pass***_str
-			;jsr LCD
-			;inx
-			;GetPass
-            
-;next                 
-			;ldx #pass****_str
-			;jsr LCD
+            inx              ;
+            cpx   #4
+            bne   GetPass
             bra   CompPass
 
 GetOilPass: ldx  #0

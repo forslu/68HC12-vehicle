@@ -7303,7 +7303,7 @@ mPMFDTMC_PMFDTMC11:                      equ        This_symb_has_been_depreciat
 
 ; export symbols
             XDEF Entry, IndxFlag, indexcnt, RightT, LeftT, _Startup, main, ton, toff, DCFlag,  LCDFlag,mph
-            XDEF tempstring, SlowFlag, FastFlag,  RTI_CTL ,RTIFLG, port_t_ddr, OdoNum, IRQFlag, port_p,DDR_p
+            XDEF tempstring, SlowFlag, FastFlag,  RTI_CTL ,RTIFLG, port_t_ddr, OdoNum, IRQFlag
             XDEF LLED, RLED, HLED, port_s
           
             XREF init_LCD, read_pot, display_string, TurnChk,   
@@ -7329,9 +7329,12 @@ my_variable: SECTION
 
 passtemp:       ds.b  4
 passkey:        ds.b  4
+
 LLED:           ds.b  1 
 RLED:           ds.b  1
 HLED:           ds.b  1
+port_s:         ds.b  1
+DDR_S:          ds.b  1
 indexcnt:       ds.b  1
 IndxFlag:       ds.b  1
 RightT:         ds.b  1
@@ -7353,16 +7356,11 @@ my_constant: SECTION
 RTIFLG:     equ  $0037
 RGINT:      equ  $0038  
 RTI_CTL:    equ  $003B
-port_s:     equ  $248
-DDR_S:      equ  $24A
-port_t_ddr: equ  $242
-port_p:     equ  $258
-DDR_p:      equ  $25A
 
 constant_string dc.b  'The value of the pot is:        ',0
 strtpass        dc.b   $1, $2, $3, $4
 oilpass         dc.b   $1, $2, $3
-
+port_t_ddr:     equ    $242
 
 
 ; code section
@@ -7377,7 +7375,6 @@ main:
             movb  #$C0, INTCR
             movb  #$80, RGINT
             movb  #$40, RTI_CTL
-            movb  #$1E, DDR_p
             movb  #$FF, DDR_S
             movb  #$FC, port_t_ddr     ;OR bset port_t_ddr, #$8	 ;set bit 3 of port t
             clr   IRQFlag

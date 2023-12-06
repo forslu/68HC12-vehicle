@@ -1,13 +1,4 @@
-*** EVALUATION ************************************************************************************************
-*********************************************************************************************
-LINKING FAILED
-The linking process failed in some stage.
-Depending on the phase the linker failed, part of the information contained in this map file may be inaccurate or wrong.
-If the linking failed before the allocation phase finished, then the addresses might be inaccurate.
-Also summary information like the code size is likely to be misleading.
----------------------------------------------------------------------------------------------
----------------------------------------------------------------------------------------------
-
+*** EVALUATION ***
 PROGRAM "C:\Users\sekefors\Desktop\Final Seth Forslund\bin\Project.abs"
 
 *********************************************************************************************
@@ -15,7 +6,7 @@ TARGET SECTION
 ---------------------------------------------------------------------------------------------
 Processor   : Freescale HC12
 Memory Model: SMALL
-File Format : ELF (no debug info)
+File Format : ELF\DWARF 2.0
 Linker      : SmartLinker V-5.0.40 Build 10203, Jul 23 2010
 
 *********************************************************************************************
@@ -23,26 +14,34 @@ FILE SECTION
 ---------------------------------------------------------------------------------------------
 main.asm.o                              Model: SMALL,         Lang: Assembler
 RTI.asm.o                               Model: SMALL,         Lang: Assembler
-IRQ_ISR.asm.o                           Model: SMALL,         Lang: Assembler
-Hex Pad.asm.o                           Model: SMALL,         Lang: Assembler
-potentiometer.c.o                       Model: SMALL,         Lang: ANSI-C
-Switch.asm.o                            Model: SMALL,         Lang: Assembler
 
 *********************************************************************************************
 STARTUP SECTION
 ---------------------------------------------------------------------------------------------
+Entry point: 0xC000 (Entry)
 
 *********************************************************************************************
 SECTION-ALLOCATION SECTION
 Section Name                    Size  Type     From       To       Segment
 ---------------------------------------------------------------------------------------------
+.init                              5     R     0xC000     0xC004   ROM_C000
+.stack                           256   R/W      0x400      0x4FF   RAM
+mycode                            43     R     0xC005     0xC02F   ROM_C000
+myvar                              8   R/W      0x500      0x507   RAM
+.vectSeg0_vect                     4     R     0xFFF0     0xFFF3   .vectSeg0
+.vectSeg1_vect                     2     R     0xFFFE     0xFFFF   .vectSeg1
 
 Summary of section sizes per section type:
+READ_ONLY (R):          36 (dec:       54)
+READ_WRITE (R/W):      108 (dec:      264)
 
 *********************************************************************************************
 VECTOR-ALLOCATION SECTION
     Address     InitValue   InitFunction
 ---------------------------------------------------------------------------------------------
+     0xFFF0        0xC005   RTI_ISR
+     0xFFF2        0xC030   IRQ_ISR
+     0xFFFE        0xC000   Entry
 
 *********************************************************************************************
 OBJECT-ALLOCATION SECTION
@@ -50,96 +49,69 @@ OBJECT-ALLOCATION SECTION
 ---------------------------------------------------------------------------------------------
 MODULE:                 -- main.asm.o --
 - PROCEDURES:
-     Entry                                        0'Error       5       5       0   MyCode      
-     main                                         0'Error       0       0       0   MyCode      
-     CompPass                                     0'Error       5       5       0   MyCode      
+     Entry                                     C000       5       5       0   .init       
+     _Startup                                  C000       0       0       0   .init       
+     main                                      C000       0       0       0   .init       
 - VARIABLES:
-     strtpass                                     0'Error       4       4       0   MY_EXTENDED_RAM
-     oilpass                                      0'Error       3       3       0   MY_EXTENDED_RAM
-     passtemp                                     0'Error       4       4       0   myvars      
-     passkey                                      0'Error       4       4       0   myvars      
-     OilFlag                                      0'Error       1       1       0   myvars      
-     ton                                          0'Error       1       1       0   myvars      
-     toff                                         0'Error       1       1       0   myvars      
-     mph                                          0'Error       1       1       0   myvars      
-     OdoNum                                       0'Error       2       2       0   myvars      
-     DCount                                       0'Error       1       1       0   myvars      
 - LABELS:
-     __SEG_END_SSTACK                             0'Error       0       0       0               
+     __SEG_END_SSTACK                           500       0       0       1               
 MODULE:                 -- RTI.asm.o --
 - PROCEDURES:
-     RTI_ISR                                      0'Error      35      53       0   mycode      
+     RTI_ISR                                   C005      2A      42       0   mycode      
+     endrti                                    C02F       1       1       0   mycode      
 - VARIABLES:
-     sum                                          0'Error       1       1       0   myvar       
-     rtiCount                                     0'Error       1       1       0   myvar       
-     secCount                                     0'Error       1       1       0   myvar       
-     sec5Count                                    0'Error       1       1       0   myvar       
-     DCount                                       0'Error       1       1       0   myvar       
-     DCFlag                                       0'Error       1       1       0   myvar       
-     TurnFlag                                     0'Error       1       1       0   myvar       
-     TurnDurFlag                                  0'Error       1       1       0   myvar       
-MODULE:                 -- IRQ_ISR.asm.o --
-- PROCEDURES:
-- VARIABLES:
-     IRQ_ISR                                      0'Error       0       0       0   IRQ_ISR.asm._SEC000000
-MODULE:                 -- Hex Pad.asm.o --
-- PROCEDURES:
-     JUMPASS                                      0'Error      17      23       0   MyCode      
-     start                                        0'Error       5       5       0   MyCode      
-     scan                                         0'Error      16      22       0   MyCode      
-     release                                      0'Error      13      19       0   MyCode      
-     firstLoop                                    0'Error       B      11       0   MyCode      
-     endloop                                      0'Error       8       8       0   MyCode      
-     delay1                                       0'Error       4       4       0   MyCode      
-     loopd                                        0'Error       8       8       0   MyCode      
-- VARIABLES:
-     send                                         0'Error       5       5       0   MY_EXTENDED_RAM
-     index                                        0'Error      10      16       0   MY_EXTENDED_RAM
-     temp                                         0'Error       1       1       0   vars        
-     loop                                         0'Error       1       1       0   vars        
-     hexval                                       0'Error       1       1       0   vars        
-MODULE:                 -- potentiometer.c.o --
-- PROCEDURES:
-     read_pot                                     0'Error      18      24       0   NON_BANKED  
-- VARIABLES:
-     pot_value                                    0'Error       2       2       0   .common     
-     _ATDCTL23                                    0'Error       2       2       0   .bss        
-     _ATDCTL45                                    0'Error       2       2       0   .bss        
-     _ATDSTAT0                                    0'Error       1       1       0   .bss        
-     _ATDDR0                                      0'Error       2       2       0   .bss        
-MODULE:                 -- Switch.asm.o --
-- PROCEDURES:
-     Swich                                        0'Error      1D      29       0   My_Code     
-     Fastturn                                     0'Error       7       7       0   My_Code     
-     return                                       0'Error       1       1       0   My_Code     
-- VARIABLES:
-     SlowFlag                                     0'Error       1       1       0   My_Var      
-     FastFlag                                     0'Error       1       1       0   My_Var      
+     sum                                        500       1       1       0   myvar       
+     rtiCount                                   501       1       1       1   myvar       
+     secCount                                   502       1       1       1   myvar       
+     sec5Count                                  503       1       1       2   myvar       
+     MotorFlag                                  504       1       1       1   myvar       
+     DCFlag                                     505       1       1       1   myvar       
+     StepFlag                                   506       1       1       1   myvar       
+     TurnDurFlag                                507       1       1       1   myvar       
 
 *********************************************************************************************
 MODULE STATISTIC
   Name                                      Data   Code  Const
 ---------------------------------------------------------------------------------------------
+  main.asm.o                                   0      5      0
+  RTI.asm.o                                    8     43      0
+  other                                      256      6      0
 
 *********************************************************************************************
 SECTION USE IN OBJECT-ALLOCATION SECTION
 ---------------------------------------------------------------------------------------------
+SECTION: ".init"
+  main _Startup Entry 
+SECTION: "mycode"
+  RTI_ISR endrti IRQ_ISR 
+SECTION: "myvar"
+  sum rtiCount secCount sec5Count MotorFlag DCFlag StepFlag TurnDurFlag 
 
 *********************************************************************************************
 OBJECT LIST SORTED BY ADDRESS
      Name                                      Addr   hSize   dSize     Ref    Section   RLIB
 ---------------------------------------------------------------------------------------------
+     sum                                        500       1       1       0   myvar       
+     rtiCount                                   501       1       1       1   myvar       
+     secCount                                   502       1       1       1   myvar       
+     sec5Count                                  503       1       1       2   myvar       
+     MotorFlag                                  504       1       1       1   myvar       
+     DCFlag                                     505       1       1       1   myvar       
+     StepFlag                                   506       1       1       1   myvar       
+     TurnDurFlag                                507       1       1       1   myvar       
+     main                                      C000       0       0       0   .init       
+     _Startup                                  C000       0       0       0   .init       
+     Entry                                     C000       5       5       0   .init       
+     RTI_ISR                                   C005      2A      42       0   mycode      
+     endrti                                    C02F       1       1       0   mycode      
+     IRQ_ISR                                   C030       0       0       0   mycode      
 
 *********************************************************************************************
 UNUSED-OBJECTS SECTION
 ---------------------------------------------------------------------------------------------
-NOT USED PROCEDURES
+NOT USED VARIABLES
 main.asm.o:
-  Start GetPass GetOilPass Oilloop OilCh ButtPass chkpass GoodPass BadPass 
-  Push2strt MidPotChk HiPotChk MaxPot Pot0 PotFound ODO AddMi ChgOil Switches 
-  strturn 
-RTI.asm.o:
-  endrti RToff reset 
+  password 
 
 *********************************************************************************************
 COPYDOWN SECTION
@@ -148,13 +120,27 @@ COPYDOWN SECTION
 *********************************************************************************************
 OBJECT-DEPENDENCIES SECTION
 ---------------------------------------------------------------------------------------------
+Entry                     USES __SEG_END_SSTACK 
+RTI_ISR                   USES rtiCount secCount TurnDurFlag DCFlag MotorFlag 
+                                sec5Count StepFlag 
 
+*********************************************************************************************
+DEPENDENCY TREE
+*********************************************************************************************
+ main and _Startup Group
+ | 
+ +- main                
+ |    
+ +- Entry               
+      
+ RTI_ISR             
+   
 *********************************************************************************************
 STATISTIC SECTION
 ---------------------------------------------------------------------------------------------
 
 ExeFile:
 --------
-Number of blocks to be downloaded: 0
-Total size of all blocks to be downloaded: 0
+Number of blocks to be downloaded: 4
+Total size of all blocks to be downloaded: 54
 

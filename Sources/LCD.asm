@@ -1,20 +1,20 @@
- XDEF enterpass_str, wrongpass_str, buttpass_str, speed_str, LCD, clearLCD_str 
- XDEF Left_str, Right_str, crash_str, chngoil_str, disp, ten, wun, string_copy      
+ XDEF wrongpass_str, buttpass_str, speed_str, LCD,  
+ XDEF Left_str, Right_str, crash_str, chngoil_str, ten, wun, string_copy      
  XDEF pass1_str, pass11_str, pass111_str, pass1111_str
       
- XREF __SEG_END_SSTACK, init_LCD, display_string, pot_value, read_pot, mph, DCFlag, LCDFlag
+ XREF __SEG_END_SSTACK, init_LCD, display_string, pot_value, read_pot, mph, DCFlag, LCDFlag ,temp_str, disp,
 
 my_variable: SECTION
-disp:	    ds.b 33
-temp_str: ds.b 33
+
+
 ten:      ds.w 1
 wun:      ds.w 1
 
 ;constant section
 my_constant: SECTION
 ;LCD Strings
-clearLCD_str    dc.b  '                                ',0
-enterpass_str   dc.b  ' Enter Password                 ',0
+
+
 pass1_str       dc.b  ' Enter Password        *        ',0
 pass11_str      dc.b  ' Enter Password        **       ',0 
 pass111_str     dc.b  ' Enter Password        ***      ',0
@@ -97,7 +97,7 @@ wuns: std 	wun
 		
 	    ldd #disp
 	    jsr display_string
-	  	movb  #0, DCFlag
+	  	;movb  #0, DCFlag
 	  	puly
 	    rts
 

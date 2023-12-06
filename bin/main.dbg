@@ -7302,17 +7302,17 @@ mPMFDTMC_PMFDTMC11:                      equ        This_symb_has_been_depreciat
 
 
 ; export symbols
-            XDEF Entry, IndxFlag, indexcnt, RightT, LeftT, _Startup, main, ton, toff, DCFlag,  LCDFlag,mph
-            XDEF tempstring, SlowFlag, FastFlag,  RTI_CTL ,RTIFLG, port_t_ddr, OdoNum, IRQFlag, port_p,DDR_p
-            XDEF  TurnFlag, ODOFlag, OilFlag, TurnDurFlag, port_s, indexr, index, indexcnt, LEDFlag
+            XDEF Entry,temp_str, IndxFlag, indexcnt, RightT, LeftT, _Startup, main, ton, toff, DCFlag,  LCDFlag,mph
+            XDEF tempstring, SlowFlag, FastFlag, disp,   RTI_CTL ,RTIFLG, port_t_ddr, OdoNum, IRQFlag, port_p,DDR_p
+            XDEF  TurnFlag, ODOFlag, OilFlag, TurnDurFlag, port_s, indexr,clearLCD_str, index, LEDFlag,  secCount, sec5Count,
         ;  LLED, RLED, HLED,
             XREF init_LCD, read_pot, display_string, TurnChk,   
             XREF __SEG_END_SSTACK, JUMPASS, hexval, Pbutton ,RTI_ISR, ODOCount
             ;  TurnFlag, TurnDurFlag, SLCDCrash  
-            XREF pot_value, speed_str, GetSpd,  SendsChr.c, secCount, sec5Count, rtiCount
+            XREF pot_value, speed_str, GetSpd,  SendsChr.c, rtiCount
            ;  sum
-            XREF potentiometer.c, LCD, enterpass_str, wrongpass_str, buttpass_str, LLEDtmp, RLEDtmp
-            XREF port_t, Left_str, Right_str, crash_str, chngoil_str, disp, clearLCD_str, string_copy
+            XREF potentiometer.c, LCD, wrongpass_str, buttpass_str, LLEDtmp, RLEDtmp
+            XREF port_t, Left_str, Right_str, crash_str, chngoil_str,  string_copy
             XREF pass1_str, pass11_str, pass111_str, pass1111_str, 
 	         
 
@@ -7346,15 +7346,21 @@ OilFlag      ds.b 1
 ODOFlag      ds.b 1
 TurnFlag     ds.b 1
 TurnDurFlag  ds.b 1
+secCount:    ds.b 1
+sec5Count:   ds.b 1
 ton:            ds.b  1
 toff:           ds.b  1
 mph:            ds.b  1
 OdoNum:         ds.w  1
 DCount:         ds.b  1
+disp:	          ds.b 33
+temp_str:       ds.b 33
 tempstring:     ds.b 33
 
 ;constant section
 my_constant: SECTION
+clearLCD_str    dc.b  '                                ',0
+enterpass_str   dc.b  ' Enter Password                 ',0
 RTIFLG:     equ  $0037
 RGINT:      equ  $0038  
 RTI_CTL:    equ  $003B
@@ -7391,14 +7397,16 @@ main:
             clr   IRQFlag
 reset:      ldd   #0            
             std   OdoNum
-            std   rtiCount
-            ldaa  #$FF
-		      	staa  RLEDtmp
+            ;std   rtiCount
+            ;ldaa  #$FF
+		      ;	staa  RLEDtmp
 		      	ldaa  #0
-		      	staa  LLEDtmp
+		      ;	staa  LLEDtmp
+		        staa  mph
             staa  indexcnt
             clr   LEDFlag
             clr   IndxFlag
+            clr   DCFlag
             clr   LeftT
             clr   RightT
             clr   OilFlag

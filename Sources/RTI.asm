@@ -1,10 +1,10 @@
                                 ;RTI_ISR
                
  XDEF RTI_ISR, sum, rtiCount, port_t, secCount, sec5Count, 
- XDEF TurnFlag, OilFlag, TurnDurFlag, DCount, ODOFlag, LLEDtmp, RLEDtmp
+ XDEF TurnFlag, OilFlag, ODOFlag, LLEDtmp, RLEDtmp
  XREF ton, toff, DCFlag, RTI_CTL,  port_t_ddr, IRQFlag, LeftT, RightT, index
  XREF indexr, indexcnt,  CrsLED, SlowFlag, FastFlag, port_p, port_s, LEDFlag
- XREF TurnFlag, ODOFlag, OilFlag, TurnDurFlag
+ XREF TurnFlag, ODOFlag, OilFlag, TurnDurFlag, secCount, sec5Count
 ; RLED, LLED,
 Const:    section
 CRGFLG:     equ  $37 
@@ -17,9 +17,8 @@ sum:         ds.b 1
 rtiCount:    ds.w 1
 count:       ds.b 1
 stepdelay:   ds.b 1
-secCount:    ds.b 1
-sec5Count:   ds.b 1
-DCount:      ds.b 1
+
+;DCount:      ds.b 1
 RLEDtmp:     ds.b 1 
 LLEDtmp:	   ds.b 1
 LEDcnt:		   ds.b 1
@@ -48,13 +47,13 @@ RTI_ISR:
 		      staa Turncnt
 		      movb #1, TurnFlag
         
-chkled:	  ldd LEDcnt
-		      addd #1
-		      std LEDcnt
-		      cpd #122		  
+chkled:	  ldaa LEDcnt
+		      adda #1
+		      staa LEDcnt
+		      cmpa #122		  
 		      ble  checksec
-		      ldd  #0
-		      std  LEDcnt
+		      ldaa  #0
+		      staa  LEDcnt
 		      movb  #1, LEDFlag
   
 checksec: ldd rtiCount
@@ -73,7 +72,7 @@ checksec: ldd rtiCount
                            ;movb #1, RightT
                           ;clr      LeftT
                         
-clearDurflag: clr  TurnDurFlag
+clearDurflag: ;clr  TurnDurFlag
           ;movb #1, LeftT
           ;clr  RightT         
 setoil:   brset OilFlag, #1, skipodo
@@ -92,6 +91,7 @@ skipodo:  ldaa secCount
 Alternate:brset LeftT, #1, turnright
           clr  RightT
           movb #1, LeftT
+          bra  chkdc
 turnright:clr  LeftT 
           movb #1, RightT
           ;not sure if needed//movb #1, MotorFlag            

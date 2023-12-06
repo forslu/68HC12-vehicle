@@ -10,8 +10,9 @@
             INCLUDE 'derivative.inc'
 
 ; export symbols
-            XDEF Entry, _Startup, main, ton, toff, DCFlag,  LCDFlag,mph
+            XDEF Entry, RightT, LeftT, _Startup, main, ton, toff, DCFlag,  LCDFlag,mph
             XDEF tempstring, SlowFlag, FastFlag,  RTI_CTL ,RTIFLG, port_t_ddr, OdoNum, IRQFlag
+            XDEF LLED, RLED, HLED
           
             XREF init_LCD, read_pot, display_string, TurnChk,   
             XREF __SEG_END_SSTACK, JUMPASS, hexval, Pbutton ,RTI_ISR, ODOCount
@@ -36,6 +37,12 @@ my_variable: SECTION
 
 passtemp:       ds.b  4
 passkey:        ds.b  4
+
+LLED:           ds.b  1 
+RLED:           ds.b  1
+HLED:           ds.b  1
+RightT:         ds.b  1
+LeftT:          ds.b  1
 FastFlag:       ds.b  1
 SlowFlag:       ds.b  1
 IRQFlag:        ds.b  1
@@ -73,7 +80,9 @@ main:
             movb  #$80, RGINT
             movb  #$40, RTI_CTL
             movb  #$FC, port_t_ddr     ;OR bset port_t_ddr, #$8	 ;set bit 3 of port t
+            clr   IRQFlag
 reset:      ldd   #0
+             
             std   OdoNum
             std   rtiCount
             clr   OilFlag
@@ -173,6 +182,8 @@ Push2strt:  ldx   #buttpass_str      ;call LCD to display "press button to start
 
 ;RUN CAR
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            ldx   #0      ;Set x to 0 for step motor
+            
   StartCar: cli
             brset IRQFlag,#1, crash 
             jsr   GetSpd

@@ -15,7 +15,7 @@
             ; reference 'Entry' either in the linker .prm file
             ; or from C/C++ later on
 
-            XREF __SEG_END_SSTACK     ; symbol defined by the linker for the end of the stack
+            XREF __SEG_END_SSTACK;,delay1     ; symbol defined by the linker for the end of the stack
 
 
 

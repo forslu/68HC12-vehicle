@@ -1,8 +1,9 @@
 ;IRQ_ISR
 
-;   XDEF IRQ_ISR
+   XDEF IRQ_ISR
  
- 
+IRQ_ISR:
+
      ;shut off all periphs except using LCD, SPEAKER, KEYPAD
      ;i.e. clear leds
     

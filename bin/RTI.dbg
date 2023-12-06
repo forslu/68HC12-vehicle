@@ -1,6 +1,6 @@
  ;RTI_ISR
  
- XDEF IRQ_ISR, RTI_ISR, sum, rtiCount, secCount, sec5Count
+ XDEF RTI_ISR, sum, rtiCount, secCount, sec5Count
  XREF __SEG_END_SSTACK
 myvar:  section
 
@@ -15,7 +15,9 @@ StepFlag    ds.b 1
 TurnDurFlag ds.b 1 
  
 mycode:  section
+         
 RTI_ISR:
+          ;LDS  #__SEG_END_SSTACK
           ldd rtiCount
           incb
           cpd #977
@@ -23,7 +25,7 @@ RTI_ISR:
           inc secCount
       
       ;setting flags
-          movb #1, TurnDurFlag                   ;set second flag (execute at 1 second: turn duration(stepper), Blinker duration (LED), count miles (DCMotor) 
+          movb #1, TurnDurFlag          ;set second flag (execute at 1 second: turn duration(stepper), Blinker duration (LED), count miles (DCMotor) 
           movb #1, DCFlag
           movb #1, MotorFlag
           
@@ -31,14 +33,14 @@ RTI_ISR:
           cmpa #5
           bne endrti
           inc sec5Count
-          movb #1, StepFlag                        ;set 5 second flag (execute turn)
+          movb #1, StepFlag                 ;set 5 second flag (execute turn)
           
 endrti:   ;bset CRGFLG, #$80
           rti
           
 
 
-IRQ_ISR:
+;IRQ_ISR:
 
                           ;if its on, turn it off
 

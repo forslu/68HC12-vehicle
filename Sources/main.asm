@@ -11,15 +11,18 @@
 
 ; export symbols
             XDEF Entry, _Startup, main, 
-            XREF __SEG_END_SSTACK,  RTI_ISR, sum   
+            XREF __SEG_END_SSTACK, read_pot,  RTI_ISR, sum, hexval, JUMPASS   
             
             
             
-            
+   ;potentiometer.c.o was created auto????         
 
 MY_EXTENDED_RAM: SECTION
-password ds.b 4
+password  dc.b  $EB, $77, $7B, $7D
 
+
+myvars:   section
+passtemp  ds.b  4
 
 
 MyCode:     SECTION
@@ -32,22 +35,43 @@ Entry:
 
 ;START
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Start:      ldx  #0
 
-                      ;set password for start
-                      ;call keypad for password
+GetPass:    ;set password for start
+            ;call LCD to display "enter password"
+            jsr  JUMPASS     ;call keypad for password
+            ldaa hexval     ;load keypad value  to a
+            staa passtemp, x   ;store keypad val to passtemp
+            inx              ;
+            cpx  #4
+            bne  GetPass
+            
+            ldx #0
+;compare password with entry          
+CompASS:    cpx  #4
+            beq  GoodPass
+            ldaa passtemp, x  ;this or do y+
+            ldab password, x  ;and x
+            inx
+            cba
+            beq CompASS
+            bra BadPass
+            
+GoodPass:   ;WIP//jsr HappySound                  ;speaker for correct
+            bra Push2strt
                       
-                      
-                      ;speaker for correct and incorrect 
-                      
-                      ;return to start if incorrect
-                      
-                      ;push to start
+BadPass:    ;WIP//jsr SadSound                  ;speaker for incorrect 
+            ;WIP//call LCD to display "wrong password"
+            lbra Start          
+                      ;return to start 
+Push2strt:            ;WIP//call LCD to display "press button to start"
+                      ;//WIP push to start
                      
 ;POT
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-;pot:
-      ;jsr read pot value
+pot:
+    jsr read_pot  ;jsr read pot value
                 
                 ;sort alg:     
                           ;is potval < or >= 31

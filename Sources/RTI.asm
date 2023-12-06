@@ -1,6 +1,6 @@
  ;RTI_ISR
  
- XDEF IRQ_ISR, RTI_ISR, sum, rtiCount, secCount, sec5Count
+ XDEF RTI_ISR, sum, rtiCount, secCount, sec5Count
  XREF __SEG_END_SSTACK
 myvar:  section
 
@@ -15,7 +15,9 @@ StepFlag    ds.b 1
 TurnDurFlag ds.b 1 
  
 mycode:  section
+         
 RTI_ISR:
+          ;LDS  #__SEG_END_SSTACK
           ldd rtiCount
           incb
           cpd #977

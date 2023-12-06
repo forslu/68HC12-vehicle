@@ -15,32 +15,33 @@
 
 			; include derivative specific macros
             INCLUDE 'mc9s12e128.inc'
-; Based on CPU DB MC9S12E128_112, version 2.87.542 (RegistersPrg V2.29)
+; Based on CPU DB MC9S12E128_112, version 2.87.539 (RegistersPrg V2.23)
 
 ; ###################################################################
 ;     Filename  : mc9s12e128.inc
 ;     Processor : MC9S12E128BCPV
-;     FileFormat: V2.29
+;     FileFormat: V2.23
 ;     DataSheet : 9S12E-FamilyDGV1/D V01.01
 ;     Compiler  : CodeWarrior compiler
-;     Date/Time : 6.8.2009, 10:24
+;     Date/Time : 20.5.2008, 8:59
 ;     Abstract  :
 ;         This header implements the mapping of I/O devices.
 ;
-;     Copyright : 1997 - 2009 Freescale Semiconductor, Inc. All Rights Reserved.
-;     
-;     http      : www.freescale.com
-;     mail      : support@freescale.com
+;     (c) Copyright UNIS, a.s. 1997-2008
+;     UNIS, a.s.
+;     Jundrovska 33
+;     624 00 Brno
+;     Czech Republic
+;     http      : www.processorexpert.com
+;     mail      : info@processorexpert.com
 ;
 ;     CPU Registers Revisions:
 ;      - 12.07.2006, V2.87.502:
-;              - Added bit 15 to PMFVALx registers. REASON: Bug-fix (#3494 in Issue Manager)
+;              - Added bit 15 to PMFVALx registers. REASON: Bug-fix (#3494 from UNIS issue manager)
 ;      - 23.08.2006, V2.87.522:
-;              - Renamed register VREGCTRL0 ==> VREGCTRL. REASON: Bug-fix (#<3647> in Issue Manager)
+;              - Renamed register VREGCTRL0 ==> VREGCTRL. REASON: Bug-fix (#<3647> from UNIS issue manager)
 ;      - 12.09.2006, V2.87.526:
-;              - Removed bits PMFVALx_PMFVAL0x. REASON: Bug-fix (#3494 in Issue Manager)
-;      - 6.08.2009, V2.87.542:
-;              - Single bits of PMFCNTx, PMFMODx, PMFDTMx registers merged to PMFCNTx[0:14], PMFMODx[0:14], PMFDTMx[0:14] groups. REASON: Access to individual bits is useless (#7539 in Issue Manager)
+;              - Removed bits PMFVALx_PMFVAL0x. REASON: Bug-fix (#3494 from UNIS issue manager)
 ;
 ;     File-Format-Revisions:
 ;      - 14.11.2005, V2.00 :
@@ -92,18 +93,6 @@
 ;               - Changes have not affected this file (because they are related to another family)
 ;      - 20.02.2008, V2.23 :
 ;               - Termination of pragma V30toV31Compatible added, #5708
-;      - 03.07.2008, V2.24 :
-;               - Added support for bits with name starting with number (like "1HZ")
-;      - 28.11.2008, V2.25 :
-;               - StandBy RAM array declaration for ANSI-C added
-;      - 1.12.2008, V2.26 :
-;               - Duplication of bit (or bit-group) name with register name is not marked as a problem, is register is internal only and it is not displayed in I/O map.
-;      - 17.3.2009, V2.27 :
-;               - Merged bit-group is not generated, if the name matches with another bit name in the register
-;      - 6.4.2009, V2.28 :
-;               - Fixed generation of merged bits for bit-groups with a digit at the end, if group-name is defined in CPUDB
-;      - 3.8.2009, V2.29 :
-;               - If there is just one bits group matching register name, single bits are not generated
 ;
 ;     Not all general-purpose I/O pins are available on all packages or on all mask sets of a specific
 ;     derivative device. To avoid extra current drain from floating input pins, the user’s reset
@@ -5155,14 +5144,104 @@ mPMFFQCA_LDFQA3:    equ    %10000000
 
 ;*** PMFCNTA - PMF Counter A Register; 0x00000222 ***
 PMFCNTA:            equ    $00000222                                ;*** PMFCNTA - PMF Counter A Register; 0x00000222 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PMFCNTA_PMFCNTA0:   equ    0                                         ; PMF Counter A, bit 0
+PMFCNTA_PMFCNTA1:   equ    1                                         ; PMF Counter A, bit 1
+PMFCNTA_PMFCNTA2:   equ    2                                         ; PMF Counter A, bit 2
+PMFCNTA_PMFCNTA3:   equ    3                                         ; PMF Counter A, bit 3
+PMFCNTA_PMFCNTA4:   equ    4                                         ; PMF Counter A, bit 4
+PMFCNTA_PMFCNTA5:   equ    5                                         ; PMF Counter A, bit 5
+PMFCNTA_PMFCNTA6:   equ    6                                         ; PMF Counter A, bit 6
+PMFCNTA_PMFCNTA7:   equ    7                                         ; PMF Counter A, bit 7
+PMFCNTA_PMFCNTA8:   equ    8                                         ; PMF Counter A, bit 8
+PMFCNTA_PMFCNTA9:   equ    9                                         ; PMF Counter A, bit 9
+PMFCNTA_PMFCNTA10:  equ    10                                        ; PMF Counter A, bit 10
+PMFCNTA_PMFCNTA11:  equ    11                                        ; PMF Counter A, bit 11
+PMFCNTA_PMFCNTA12:  equ    12                                        ; PMF Counter A, bit 12
+PMFCNTA_PMFCNTA13:  equ    13                                        ; PMF Counter A, bit 13
+PMFCNTA_PMFCNTA14:  equ    14                                        ; PMF Counter A, bit 14
+; bit position masks
+mPMFCNTA_PMFCNTA0:  equ    %00000001
+mPMFCNTA_PMFCNTA1:  equ    %00000010
+mPMFCNTA_PMFCNTA2:  equ    %00000100
+mPMFCNTA_PMFCNTA3:  equ    %00001000
+mPMFCNTA_PMFCNTA4:  equ    %00010000
+mPMFCNTA_PMFCNTA5:  equ    %00100000
+mPMFCNTA_PMFCNTA6:  equ    %01000000
+mPMFCNTA_PMFCNTA7:  equ    %10000000
+mPMFCNTA_PMFCNTA8:  equ    %100000000
+mPMFCNTA_PMFCNTA9:  equ    %1000000000
+mPMFCNTA_PMFCNTA10: equ    %10000000000
+mPMFCNTA_PMFCNTA11: equ    %100000000000
+mPMFCNTA_PMFCNTA12: equ    %1000000000000
+mPMFCNTA_PMFCNTA13: equ    %10000000000000
+mPMFCNTA_PMFCNTA14: equ    %100000000000000
 
 
 ;*** PMFMODA - PMF Counter Modulo A Register; 0x00000224 ***
 PMFMODA:            equ    $00000224                                ;*** PMFMODA - PMF Counter Modulo A Register; 0x00000224 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PMFMODA_PMFMODA0:   equ    0                                         ; PMF Counter Modulo A, bit 0
+PMFMODA_PMFMODA1:   equ    1                                         ; PMF Counter Modulo A, bit 1
+PMFMODA_PMFMODA2:   equ    2                                         ; PMF Counter Modulo A, bit 2
+PMFMODA_PMFMODA3:   equ    3                                         ; PMF Counter Modulo A, bit 3
+PMFMODA_PMFMODA4:   equ    4                                         ; PMF Counter Modulo A, bit 4
+PMFMODA_PMFMODA5:   equ    5                                         ; PMF Counter Modulo A, bit 5
+PMFMODA_PMFMODA6:   equ    6                                         ; PMF Counter Modulo A, bit 6
+PMFMODA_PMFMODA7:   equ    7                                         ; PMF Counter Modulo A, bit 7
+PMFMODA_PMFMODA8:   equ    8                                         ; PMF Counter Modulo A, bit 8
+PMFMODA_PMFMODA9:   equ    9                                         ; PMF Counter Modulo A, bit 9
+PMFMODA_PMFMODA10:  equ    10                                        ; PMF Counter Modulo A, bit 10
+PMFMODA_PMFMODA11:  equ    11                                        ; PMF Counter Modulo A, bit 11
+PMFMODA_PMFMODA12:  equ    12                                        ; PMF Counter Modulo A, bit 12
+PMFMODA_PMFMODA13:  equ    13                                        ; PMF Counter Modulo A, bit 13
+PMFMODA_PMFMODA14:  equ    14                                        ; PMF Counter Modulo A, bit 14
+; bit position masks
+mPMFMODA_PMFMODA0:  equ    %00000001
+mPMFMODA_PMFMODA1:  equ    %00000010
+mPMFMODA_PMFMODA2:  equ    %00000100
+mPMFMODA_PMFMODA3:  equ    %00001000
+mPMFMODA_PMFMODA4:  equ    %00010000
+mPMFMODA_PMFMODA5:  equ    %00100000
+mPMFMODA_PMFMODA6:  equ    %01000000
+mPMFMODA_PMFMODA7:  equ    %10000000
+mPMFMODA_PMFMODA8:  equ    %100000000
+mPMFMODA_PMFMODA9:  equ    %1000000000
+mPMFMODA_PMFMODA10: equ    %10000000000
+mPMFMODA_PMFMODA11: equ    %100000000000
+mPMFMODA_PMFMODA12: equ    %1000000000000
+mPMFMODA_PMFMODA13: equ    %10000000000000
+mPMFMODA_PMFMODA14: equ    %100000000000000
 
 
 ;*** PMFDTMA - PMF Deadtime A Register; 0x00000226 ***
 PMFDTMA:            equ    $00000226                                ;*** PMFDTMA - PMF Deadtime A Register; 0x00000226 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PMFDTMA_PMFDTMA0:   equ    0                                         ; PMF Deadtime A, bit 0
+PMFDTMA_PMFDTMA1:   equ    1                                         ; PMF Deadtime A, bit 1
+PMFDTMA_PMFDTMA2:   equ    2                                         ; PMF Deadtime A, bit 2
+PMFDTMA_PMFDTMA3:   equ    3                                         ; PMF Deadtime A, bit 3
+PMFDTMA_PMFDTMA4:   equ    4                                         ; PMF Deadtime A, bit 4
+PMFDTMA_PMFDTMA5:   equ    5                                         ; PMF Deadtime A, bit 5
+PMFDTMA_PMFDTMA6:   equ    6                                         ; PMF Deadtime A, bit 6
+PMFDTMA_PMFDTMA7:   equ    7                                         ; PMF Deadtime A, bit 7
+PMFDTMA_PMFDTMA8:   equ    8                                         ; PMF Deadtime A, bit 8
+PMFDTMA_PMFDTMA9:   equ    9                                         ; PMF Deadtime A, bit 9
+PMFDTMA_PMFDTMA10:  equ    10                                        ; PMF Deadtime A, bit 10
+PMFDTMA_PMFDTMA11:  equ    11                                        ; PMF Deadtime A, bit 11
+; bit position masks
+mPMFDTMA_PMFDTMA0:  equ    %00000001
+mPMFDTMA_PMFDTMA1:  equ    %00000010
+mPMFDTMA_PMFDTMA2:  equ    %00000100
+mPMFDTMA_PMFDTMA3:  equ    %00001000
+mPMFDTMA_PMFDTMA4:  equ    %00010000
+mPMFDTMA_PMFDTMA5:  equ    %00100000
+mPMFDTMA_PMFDTMA6:  equ    %01000000
+mPMFDTMA_PMFDTMA7:  equ    %10000000
+mPMFDTMA_PMFDTMA8:  equ    %100000000
+mPMFDTMA_PMFDTMA9:  equ    %1000000000
+mPMFDTMA_PMFDTMA10: equ    %10000000000
+mPMFDTMA_PMFDTMA11: equ    %100000000000
 
 
 ;*** PMFENCB - PMF enable control B register; 0x00000228 ***
@@ -5201,14 +5280,104 @@ mPMFFQCB_LDFQB3:    equ    %10000000
 
 ;*** PMFCNTB - PMF Counter B Register; 0x0000022A ***
 PMFCNTB:            equ    $0000022A                                ;*** PMFCNTB - PMF Counter B Register; 0x0000022A ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PMFCNTB_PMFCNTB0:   equ    0                                         ; PMF Counter B, bit 0
+PMFCNTB_PMFCNTB1:   equ    1                                         ; PMF Counter B, bit 1
+PMFCNTB_PMFCNTB2:   equ    2                                         ; PMF Counter B, bit 2
+PMFCNTB_PMFCNTB3:   equ    3                                         ; PMF Counter B, bit 3
+PMFCNTB_PMFCNTB4:   equ    4                                         ; PMF Counter B, bit 4
+PMFCNTB_PMFCNTB5:   equ    5                                         ; PMF Counter B, bit 5
+PMFCNTB_PMFCNTB6:   equ    6                                         ; PMF Counter B, bit 6
+PMFCNTB_PMFCNTB7:   equ    7                                         ; PMF Counter B, bit 7
+PMFCNTB_PMFCNTB8:   equ    8                                         ; PMF Counter B, bit 8
+PMFCNTB_PMFCNTB9:   equ    9                                         ; PMF Counter B, bit 9
+PMFCNTB_PMFCNTB10:  equ    10                                        ; PMF Counter B, bit 10
+PMFCNTB_PMFCNTB11:  equ    11                                        ; PMF Counter B, bit 11
+PMFCNTB_PMFCNTB12:  equ    12                                        ; PMF Counter B, bit 12
+PMFCNTB_PMFCNTB13:  equ    13                                        ; PMF Counter B, bit 13
+PMFCNTB_PMFCNTB14:  equ    14                                        ; PMF Counter B, bit 14
+; bit position masks
+mPMFCNTB_PMFCNTB0:  equ    %00000001
+mPMFCNTB_PMFCNTB1:  equ    %00000010
+mPMFCNTB_PMFCNTB2:  equ    %00000100
+mPMFCNTB_PMFCNTB3:  equ    %00001000
+mPMFCNTB_PMFCNTB4:  equ    %00010000
+mPMFCNTB_PMFCNTB5:  equ    %00100000
+mPMFCNTB_PMFCNTB6:  equ    %01000000
+mPMFCNTB_PMFCNTB7:  equ    %10000000
+mPMFCNTB_PMFCNTB8:  equ    %100000000
+mPMFCNTB_PMFCNTB9:  equ    %1000000000
+mPMFCNTB_PMFCNTB10: equ    %10000000000
+mPMFCNTB_PMFCNTB11: equ    %100000000000
+mPMFCNTB_PMFCNTB12: equ    %1000000000000
+mPMFCNTB_PMFCNTB13: equ    %10000000000000
+mPMFCNTB_PMFCNTB14: equ    %100000000000000
 
 
 ;*** PMFMODB - PMF Counter Modulo B Register; 0x0000022C ***
 PMFMODB:            equ    $0000022C                                ;*** PMFMODB - PMF Counter Modulo B Register; 0x0000022C ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PMFMODB_PMFMODB0:   equ    0                                         ; PMF Counter Modulo B, bit 0
+PMFMODB_PMFMODB1:   equ    1                                         ; PMF Counter Modulo B, bit 1
+PMFMODB_PMFMODB2:   equ    2                                         ; PMF Counter Modulo B, bit 2
+PMFMODB_PMFMODB3:   equ    3                                         ; PMF Counter Modulo B, bit 3
+PMFMODB_PMFMODB4:   equ    4                                         ; PMF Counter Modulo B, bit 4
+PMFMODB_PMFMODB5:   equ    5                                         ; PMF Counter Modulo B, bit 5
+PMFMODB_PMFMODB6:   equ    6                                         ; PMF Counter Modulo B, bit 6
+PMFMODB_PMFMODB7:   equ    7                                         ; PMF Counter Modulo B, bit 7
+PMFMODB_PMFMODB8:   equ    8                                         ; PMF Counter Modulo B, bit 8
+PMFMODB_PMFMODB9:   equ    9                                         ; PMF Counter Modulo B, bit 9
+PMFMODB_PMFMODB10:  equ    10                                        ; PMF Counter Modulo B, bit 10
+PMFMODB_PMFMODB11:  equ    11                                        ; PMF Counter Modulo B, bit 11
+PMFMODB_PMFMODB12:  equ    12                                        ; PMF Counter Modulo B, bit 12
+PMFMODB_PMFMODB13:  equ    13                                        ; PMF Counter Modulo B, bit 13
+PMFMODB_PMFMODB14:  equ    14                                        ; PMF Counter Modulo B, bit 14
+; bit position masks
+mPMFMODB_PMFMODB0:  equ    %00000001
+mPMFMODB_PMFMODB1:  equ    %00000010
+mPMFMODB_PMFMODB2:  equ    %00000100
+mPMFMODB_PMFMODB3:  equ    %00001000
+mPMFMODB_PMFMODB4:  equ    %00010000
+mPMFMODB_PMFMODB5:  equ    %00100000
+mPMFMODB_PMFMODB6:  equ    %01000000
+mPMFMODB_PMFMODB7:  equ    %10000000
+mPMFMODB_PMFMODB8:  equ    %100000000
+mPMFMODB_PMFMODB9:  equ    %1000000000
+mPMFMODB_PMFMODB10: equ    %10000000000
+mPMFMODB_PMFMODB11: equ    %100000000000
+mPMFMODB_PMFMODB12: equ    %1000000000000
+mPMFMODB_PMFMODB13: equ    %10000000000000
+mPMFMODB_PMFMODB14: equ    %100000000000000
 
 
 ;*** PMFDTMB - PMF Deadtime B Register; 0x0000022E ***
 PMFDTMB:            equ    $0000022E                                ;*** PMFDTMB - PMF Deadtime B Register; 0x0000022E ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PMFDTMB_PMFDTMB0:   equ    0                                         ; PMF Deadtime B, bit 0
+PMFDTMB_PMFDTMB1:   equ    1                                         ; PMF Deadtime B, bit 1
+PMFDTMB_PMFDTMB2:   equ    2                                         ; PMF Deadtime B, bit 2
+PMFDTMB_PMFDTMB3:   equ    3                                         ; PMF Deadtime B, bit 3
+PMFDTMB_PMFDTMB4:   equ    4                                         ; PMF Deadtime B, bit 4
+PMFDTMB_PMFDTMB5:   equ    5                                         ; PMF Deadtime B, bit 5
+PMFDTMB_PMFDTMB6:   equ    6                                         ; PMF Deadtime B, bit 6
+PMFDTMB_PMFDTMB7:   equ    7                                         ; PMF Deadtime B, bit 7
+PMFDTMB_PMFDTMB8:   equ    8                                         ; PMF Deadtime B, bit 8
+PMFDTMB_PMFDTMB9:   equ    9                                         ; PMF Deadtime B, bit 9
+PMFDTMB_PMFDTMB10:  equ    10                                        ; PMF Deadtime B, bit 10
+PMFDTMB_PMFDTMB11:  equ    11                                        ; PMF Deadtime B, bit 11
+; bit position masks
+mPMFDTMB_PMFDTMB0:  equ    %00000001
+mPMFDTMB_PMFDTMB1:  equ    %00000010
+mPMFDTMB_PMFDTMB2:  equ    %00000100
+mPMFDTMB_PMFDTMB3:  equ    %00001000
+mPMFDTMB_PMFDTMB4:  equ    %00010000
+mPMFDTMB_PMFDTMB5:  equ    %00100000
+mPMFDTMB_PMFDTMB6:  equ    %01000000
+mPMFDTMB_PMFDTMB7:  equ    %10000000
+mPMFDTMB_PMFDTMB8:  equ    %100000000
+mPMFDTMB_PMFDTMB9:  equ    %1000000000
+mPMFDTMB_PMFDTMB10: equ    %10000000000
+mPMFDTMB_PMFDTMB11: equ    %100000000000
 
 
 ;*** PMFENCC - PMF Enable Control C Register; 0x00000230 ***
@@ -5247,14 +5416,104 @@ mPMFFQCC_LDFQC3:    equ    %10000000
 
 ;*** PMFCNTC - PMF Counter C Register; 0x00000232 ***
 PMFCNTC:            equ    $00000232                                ;*** PMFCNTC - PMF Counter C Register; 0x00000232 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PMFCNTC_PMFCNTC0:   equ    0                                         ; PMF Counter C, bit 0
+PMFCNTC_PMFCNTC1:   equ    1                                         ; PMF Counter C, bit 1
+PMFCNTC_PMFCNTC2:   equ    2                                         ; PMF Counter C, bit 2
+PMFCNTC_PMFCNTC3:   equ    3                                         ; PMF Counter C, bit 3
+PMFCNTC_PMFCNTC4:   equ    4                                         ; PMF Counter C, bit 4
+PMFCNTC_PMFCNTC5:   equ    5                                         ; PMF Counter C, bit 5
+PMFCNTC_PMFCNTC6:   equ    6                                         ; PMF Counter C, bit 6
+PMFCNTC_PMFCNTC7:   equ    7                                         ; PMF Counter C, bit 7
+PMFCNTC_PMFCNTC8:   equ    8                                         ; PMF Counter C, bit 8
+PMFCNTC_PMFCNTC9:   equ    9                                         ; PMF Counter C, bit 9
+PMFCNTC_PMFCNTC10:  equ    10                                        ; PMF Counter C, bit 10
+PMFCNTC_PMFCNTC11:  equ    11                                        ; PMF Counter C, bit 11
+PMFCNTC_PMFCNTC12:  equ    12                                        ; PMF Counter C, bit 12
+PMFCNTC_PMFCNTC13:  equ    13                                        ; PMF Counter C, bit 13
+PMFCNTC_PMFCNTC14:  equ    14                                        ; PMF Counter C, bit 14
+; bit position masks
+mPMFCNTC_PMFCNTC0:  equ    %00000001
+mPMFCNTC_PMFCNTC1:  equ    %00000010
+mPMFCNTC_PMFCNTC2:  equ    %00000100
+mPMFCNTC_PMFCNTC3:  equ    %00001000
+mPMFCNTC_PMFCNTC4:  equ    %00010000
+mPMFCNTC_PMFCNTC5:  equ    %00100000
+mPMFCNTC_PMFCNTC6:  equ    %01000000
+mPMFCNTC_PMFCNTC7:  equ    %10000000
+mPMFCNTC_PMFCNTC8:  equ    %100000000
+mPMFCNTC_PMFCNTC9:  equ    %1000000000
+mPMFCNTC_PMFCNTC10: equ    %10000000000
+mPMFCNTC_PMFCNTC11: equ    %100000000000
+mPMFCNTC_PMFCNTC12: equ    %1000000000000
+mPMFCNTC_PMFCNTC13: equ    %10000000000000
+mPMFCNTC_PMFCNTC14: equ    %100000000000000
 
 
 ;*** PMFMODC - PMF Counter Modulo C Register; 0x00000234 ***
 PMFMODC:            equ    $00000234                                ;*** PMFMODC - PMF Counter Modulo C Register; 0x00000234 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PMFMODC_PMFMODC0:   equ    0                                         ; PMF Counter Modulo C, bit 0
+PMFMODC_PMFMODC1:   equ    1                                         ; PMF Counter Modulo C, bit 1
+PMFMODC_PMFMODC2:   equ    2                                         ; PMF Counter Modulo C, bit 2
+PMFMODC_PMFMODC3:   equ    3                                         ; PMF Counter Modulo C, bit 3
+PMFMODC_PMFMODC4:   equ    4                                         ; PMF Counter Modulo C, bit 4
+PMFMODC_PMFMODC5:   equ    5                                         ; PMF Counter Modulo C, bit 5
+PMFMODC_PMFMODC6:   equ    6                                         ; PMF Counter Modulo C, bit 6
+PMFMODC_PMFMODC7:   equ    7                                         ; PMF Counter Modulo C, bit 7
+PMFMODC_PMFMODC8:   equ    8                                         ; PMF Counter Modulo C, bit 8
+PMFMODC_PMFMODC9:   equ    9                                         ; PMF Counter Modulo C, bit 9
+PMFMODC_PMFMODC10:  equ    10                                        ; PMF Counter Modulo C, bit 10
+PMFMODC_PMFMODC11:  equ    11                                        ; PMF Counter Modulo C, bit 11
+PMFMODC_PMFMODC12:  equ    12                                        ; PMF Counter Modulo C, bit 12
+PMFMODC_PMFMODC13:  equ    13                                        ; PMF Counter Modulo C, bit 13
+PMFMODC_PMFMODC14:  equ    14                                        ; PMF Counter Modulo C, bit 14
+; bit position masks
+mPMFMODC_PMFMODC0:  equ    %00000001
+mPMFMODC_PMFMODC1:  equ    %00000010
+mPMFMODC_PMFMODC2:  equ    %00000100
+mPMFMODC_PMFMODC3:  equ    %00001000
+mPMFMODC_PMFMODC4:  equ    %00010000
+mPMFMODC_PMFMODC5:  equ    %00100000
+mPMFMODC_PMFMODC6:  equ    %01000000
+mPMFMODC_PMFMODC7:  equ    %10000000
+mPMFMODC_PMFMODC8:  equ    %100000000
+mPMFMODC_PMFMODC9:  equ    %1000000000
+mPMFMODC_PMFMODC10: equ    %10000000000
+mPMFMODC_PMFMODC11: equ    %100000000000
+mPMFMODC_PMFMODC12: equ    %1000000000000
+mPMFMODC_PMFMODC13: equ    %10000000000000
+mPMFMODC_PMFMODC14: equ    %100000000000000
 
 
 ;*** PMFDTMC - PMF Deadtime C Register; 0x00000236 ***
 PMFDTMC:            equ    $00000236                                ;*** PMFDTMC - PMF Deadtime C Register; 0x00000236 ***
+; bit numbers for usage in BCLR, BSET, BRCLR and BRSET
+PMFDTMC_PMFDTMC0:   equ    0                                         ; PMF Deadtime C, bit 0
+PMFDTMC_PMFDTMC1:   equ    1                                         ; PMF Deadtime C, bit 1
+PMFDTMC_PMFDTMC2:   equ    2                                         ; PMF Deadtime C, bit 2
+PMFDTMC_PMFDTMC3:   equ    3                                         ; PMF Deadtime C, bit 3
+PMFDTMC_PMFDTMC4:   equ    4                                         ; PMF Deadtime C, bit 4
+PMFDTMC_PMFDTMC5:   equ    5                                         ; PMF Deadtime C, bit 5
+PMFDTMC_PMFDTMC6:   equ    6                                         ; PMF Deadtime C, bit 6
+PMFDTMC_PMFDTMC7:   equ    7                                         ; PMF Deadtime C, bit 7
+PMFDTMC_PMFDTMC8:   equ    8                                         ; PMF Deadtime C, bit 8
+PMFDTMC_PMFDTMC9:   equ    9                                         ; PMF Deadtime C, bit 9
+PMFDTMC_PMFDTMC10:  equ    10                                        ; PMF Deadtime C, bit 10
+PMFDTMC_PMFDTMC11:  equ    11                                        ; PMF Deadtime C, bit 11
+; bit position masks
+mPMFDTMC_PMFDTMC0:  equ    %00000001
+mPMFDTMC_PMFDTMC1:  equ    %00000010
+mPMFDTMC_PMFDTMC2:  equ    %00000100
+mPMFDTMC_PMFDTMC3:  equ    %00001000
+mPMFDTMC_PMFDTMC4:  equ    %00010000
+mPMFDTMC_PMFDTMC5:  equ    %00100000
+mPMFDTMC_PMFDTMC6:  equ    %01000000
+mPMFDTMC_PMFDTMC7:  equ    %10000000
+mPMFDTMC_PMFDTMC8:  equ    %100000000
+mPMFDTMC_PMFDTMC9:  equ    %1000000000
+mPMFDTMC_PMFDTMC10: equ    %10000000000
+mPMFDTMC_PMFDTMC11: equ    %100000000000
 
 
 ;*** PTT - Port T I/O Register; 0x00000240 ***
@@ -7038,455 +7297,83 @@ mVREGCTRL0_LVIE                          EQU        mVREGCTRL_LVIE
 VREGCTRL0_LVDS                           EQU        VREGCTRL_LVDS
 mVREGCTRL0_LVDS                          EQU        mVREGCTRL_LVDS
 
-
-; **** 6.8.2009 10:22:24
-
-        IFNDEF __GENERATE_APPLICATION__
-PMFCNTA_PMFCNTA0:                        equ        This_symb_has_been_depreciated
-PMFCNTA_PMFCNTA1:                        equ        This_symb_has_been_depreciated
-PMFCNTA_PMFCNTA2:                        equ        This_symb_has_been_depreciated
-PMFCNTA_PMFCNTA3:                        equ        This_symb_has_been_depreciated
-PMFCNTA_PMFCNTA4:                        equ        This_symb_has_been_depreciated
-PMFCNTA_PMFCNTA5:                        equ        This_symb_has_been_depreciated
-PMFCNTA_PMFCNTA6:                        equ        This_symb_has_been_depreciated
-PMFCNTA_PMFCNTA7:                        equ        This_symb_has_been_depreciated
-PMFCNTA_PMFCNTA8:                        equ        This_symb_has_been_depreciated
-PMFCNTA_PMFCNTA9:                        equ        This_symb_has_been_depreciated
-PMFCNTA_PMFCNTA10:                       equ        This_symb_has_been_depreciated
-PMFCNTA_PMFCNTA11:                       equ        This_symb_has_been_depreciated
-PMFCNTA_PMFCNTA12:                       equ        This_symb_has_been_depreciated
-PMFCNTA_PMFCNTA13:                       equ        This_symb_has_been_depreciated
-PMFCNTA_PMFCNTA14:                       equ        This_symb_has_been_depreciated
-mPMFCNTA_PMFCNTA0:                       equ        This_symb_has_been_depreciated
-mPMFCNTA_PMFCNTA1:                       equ        This_symb_has_been_depreciated
-mPMFCNTA_PMFCNTA2:                       equ        This_symb_has_been_depreciated
-mPMFCNTA_PMFCNTA3:                       equ        This_symb_has_been_depreciated
-mPMFCNTA_PMFCNTA4:                       equ        This_symb_has_been_depreciated
-mPMFCNTA_PMFCNTA5:                       equ        This_symb_has_been_depreciated
-mPMFCNTA_PMFCNTA6:                       equ        This_symb_has_been_depreciated
-mPMFCNTA_PMFCNTA7:                       equ        This_symb_has_been_depreciated
-mPMFCNTA_PMFCNTA8:                       equ        This_symb_has_been_depreciated
-mPMFCNTA_PMFCNTA9:                       equ        This_symb_has_been_depreciated
-mPMFCNTA_PMFCNTA10:                      equ        This_symb_has_been_depreciated
-mPMFCNTA_PMFCNTA11:                      equ        This_symb_has_been_depreciated
-mPMFCNTA_PMFCNTA12:                      equ        This_symb_has_been_depreciated
-mPMFCNTA_PMFCNTA13:                      equ        This_symb_has_been_depreciated
-mPMFCNTA_PMFCNTA14:                      equ        This_symb_has_been_depreciated
-PMFMODA_PMFMODA0:                        equ        This_symb_has_been_depreciated
-PMFMODA_PMFMODA1:                        equ        This_symb_has_been_depreciated
-PMFMODA_PMFMODA2:                        equ        This_symb_has_been_depreciated
-PMFMODA_PMFMODA3:                        equ        This_symb_has_been_depreciated
-PMFMODA_PMFMODA4:                        equ        This_symb_has_been_depreciated
-PMFMODA_PMFMODA5:                        equ        This_symb_has_been_depreciated
-PMFMODA_PMFMODA6:                        equ        This_symb_has_been_depreciated
-PMFMODA_PMFMODA7:                        equ        This_symb_has_been_depreciated
-PMFMODA_PMFMODA8:                        equ        This_symb_has_been_depreciated
-PMFMODA_PMFMODA9:                        equ        This_symb_has_been_depreciated
-PMFMODA_PMFMODA10:                       equ        This_symb_has_been_depreciated
-PMFMODA_PMFMODA11:                       equ        This_symb_has_been_depreciated
-PMFMODA_PMFMODA12:                       equ        This_symb_has_been_depreciated
-PMFMODA_PMFMODA13:                       equ        This_symb_has_been_depreciated
-PMFMODA_PMFMODA14:                       equ        This_symb_has_been_depreciated
-mPMFMODA_PMFMODA0:                       equ        This_symb_has_been_depreciated
-mPMFMODA_PMFMODA1:                       equ        This_symb_has_been_depreciated
-mPMFMODA_PMFMODA2:                       equ        This_symb_has_been_depreciated
-mPMFMODA_PMFMODA3:                       equ        This_symb_has_been_depreciated
-mPMFMODA_PMFMODA4:                       equ        This_symb_has_been_depreciated
-mPMFMODA_PMFMODA5:                       equ        This_symb_has_been_depreciated
-mPMFMODA_PMFMODA6:                       equ        This_symb_has_been_depreciated
-mPMFMODA_PMFMODA7:                       equ        This_symb_has_been_depreciated
-mPMFMODA_PMFMODA8:                       equ        This_symb_has_been_depreciated
-mPMFMODA_PMFMODA9:                       equ        This_symb_has_been_depreciated
-mPMFMODA_PMFMODA10:                      equ        This_symb_has_been_depreciated
-mPMFMODA_PMFMODA11:                      equ        This_symb_has_been_depreciated
-mPMFMODA_PMFMODA12:                      equ        This_symb_has_been_depreciated
-mPMFMODA_PMFMODA13:                      equ        This_symb_has_been_depreciated
-mPMFMODA_PMFMODA14:                      equ        This_symb_has_been_depreciated
-PMFDTMA_PMFDTMA0:                        equ        This_symb_has_been_depreciated
-PMFDTMA_PMFDTMA1:                        equ        This_symb_has_been_depreciated
-PMFDTMA_PMFDTMA2:                        equ        This_symb_has_been_depreciated
-PMFDTMA_PMFDTMA3:                        equ        This_symb_has_been_depreciated
-PMFDTMA_PMFDTMA4:                        equ        This_symb_has_been_depreciated
-PMFDTMA_PMFDTMA5:                        equ        This_symb_has_been_depreciated
-PMFDTMA_PMFDTMA6:                        equ        This_symb_has_been_depreciated
-PMFDTMA_PMFDTMA7:                        equ        This_symb_has_been_depreciated
-PMFDTMA_PMFDTMA8:                        equ        This_symb_has_been_depreciated
-PMFDTMA_PMFDTMA9:                        equ        This_symb_has_been_depreciated
-PMFDTMA_PMFDTMA10:                       equ        This_symb_has_been_depreciated
-PMFDTMA_PMFDTMA11:                       equ        This_symb_has_been_depreciated
-mPMFDTMA_PMFDTMA0:                       equ        This_symb_has_been_depreciated
-mPMFDTMA_PMFDTMA1:                       equ        This_symb_has_been_depreciated
-mPMFDTMA_PMFDTMA2:                       equ        This_symb_has_been_depreciated
-mPMFDTMA_PMFDTMA3:                       equ        This_symb_has_been_depreciated
-mPMFDTMA_PMFDTMA4:                       equ        This_symb_has_been_depreciated
-mPMFDTMA_PMFDTMA5:                       equ        This_symb_has_been_depreciated
-mPMFDTMA_PMFDTMA6:                       equ        This_symb_has_been_depreciated
-mPMFDTMA_PMFDTMA7:                       equ        This_symb_has_been_depreciated
-mPMFDTMA_PMFDTMA8:                       equ        This_symb_has_been_depreciated
-mPMFDTMA_PMFDTMA9:                       equ        This_symb_has_been_depreciated
-mPMFDTMA_PMFDTMA10:                      equ        This_symb_has_been_depreciated
-mPMFDTMA_PMFDTMA11:                      equ        This_symb_has_been_depreciated
-PMFCNTB_PMFCNTB0:                        equ        This_symb_has_been_depreciated
-PMFCNTB_PMFCNTB1:                        equ        This_symb_has_been_depreciated
-PMFCNTB_PMFCNTB2:                        equ        This_symb_has_been_depreciated
-PMFCNTB_PMFCNTB3:                        equ        This_symb_has_been_depreciated
-PMFCNTB_PMFCNTB4:                        equ        This_symb_has_been_depreciated
-PMFCNTB_PMFCNTB5:                        equ        This_symb_has_been_depreciated
-PMFCNTB_PMFCNTB6:                        equ        This_symb_has_been_depreciated
-PMFCNTB_PMFCNTB7:                        equ        This_symb_has_been_depreciated
-PMFCNTB_PMFCNTB8:                        equ        This_symb_has_been_depreciated
-PMFCNTB_PMFCNTB9:                        equ        This_symb_has_been_depreciated
-PMFCNTB_PMFCNTB10:                       equ        This_symb_has_been_depreciated
-PMFCNTB_PMFCNTB11:                       equ        This_symb_has_been_depreciated
-PMFCNTB_PMFCNTB12:                       equ        This_symb_has_been_depreciated
-PMFCNTB_PMFCNTB13:                       equ        This_symb_has_been_depreciated
-PMFCNTB_PMFCNTB14:                       equ        This_symb_has_been_depreciated
-mPMFCNTB_PMFCNTB0:                       equ        This_symb_has_been_depreciated
-mPMFCNTB_PMFCNTB1:                       equ        This_symb_has_been_depreciated
-mPMFCNTB_PMFCNTB2:                       equ        This_symb_has_been_depreciated
-mPMFCNTB_PMFCNTB3:                       equ        This_symb_has_been_depreciated
-mPMFCNTB_PMFCNTB4:                       equ        This_symb_has_been_depreciated
-mPMFCNTB_PMFCNTB5:                       equ        This_symb_has_been_depreciated
-mPMFCNTB_PMFCNTB6:                       equ        This_symb_has_been_depreciated
-mPMFCNTB_PMFCNTB7:                       equ        This_symb_has_been_depreciated
-mPMFCNTB_PMFCNTB8:                       equ        This_symb_has_been_depreciated
-mPMFCNTB_PMFCNTB9:                       equ        This_symb_has_been_depreciated
-mPMFCNTB_PMFCNTB10:                      equ        This_symb_has_been_depreciated
-mPMFCNTB_PMFCNTB11:                      equ        This_symb_has_been_depreciated
-mPMFCNTB_PMFCNTB12:                      equ        This_symb_has_been_depreciated
-mPMFCNTB_PMFCNTB13:                      equ        This_symb_has_been_depreciated
-mPMFCNTB_PMFCNTB14:                      equ        This_symb_has_been_depreciated
-PMFMODB_PMFMODB0:                        equ        This_symb_has_been_depreciated
-PMFMODB_PMFMODB1:                        equ        This_symb_has_been_depreciated
-PMFMODB_PMFMODB2:                        equ        This_symb_has_been_depreciated
-PMFMODB_PMFMODB3:                        equ        This_symb_has_been_depreciated
-PMFMODB_PMFMODB4:                        equ        This_symb_has_been_depreciated
-PMFMODB_PMFMODB5:                        equ        This_symb_has_been_depreciated
-PMFMODB_PMFMODB6:                        equ        This_symb_has_been_depreciated
-PMFMODB_PMFMODB7:                        equ        This_symb_has_been_depreciated
-PMFMODB_PMFMODB8:                        equ        This_symb_has_been_depreciated
-PMFMODB_PMFMODB9:                        equ        This_symb_has_been_depreciated
-PMFMODB_PMFMODB10:                       equ        This_symb_has_been_depreciated
-PMFMODB_PMFMODB11:                       equ        This_symb_has_been_depreciated
-PMFMODB_PMFMODB12:                       equ        This_symb_has_been_depreciated
-PMFMODB_PMFMODB13:                       equ        This_symb_has_been_depreciated
-PMFMODB_PMFMODB14:                       equ        This_symb_has_been_depreciated
-mPMFMODB_PMFMODB0:                       equ        This_symb_has_been_depreciated
-mPMFMODB_PMFMODB1:                       equ        This_symb_has_been_depreciated
-mPMFMODB_PMFMODB2:                       equ        This_symb_has_been_depreciated
-mPMFMODB_PMFMODB3:                       equ        This_symb_has_been_depreciated
-mPMFMODB_PMFMODB4:                       equ        This_symb_has_been_depreciated
-mPMFMODB_PMFMODB5:                       equ        This_symb_has_been_depreciated
-mPMFMODB_PMFMODB6:                       equ        This_symb_has_been_depreciated
-mPMFMODB_PMFMODB7:                       equ        This_symb_has_been_depreciated
-mPMFMODB_PMFMODB8:                       equ        This_symb_has_been_depreciated
-mPMFMODB_PMFMODB9:                       equ        This_symb_has_been_depreciated
-mPMFMODB_PMFMODB10:                      equ        This_symb_has_been_depreciated
-mPMFMODB_PMFMODB11:                      equ        This_symb_has_been_depreciated
-mPMFMODB_PMFMODB12:                      equ        This_symb_has_been_depreciated
-mPMFMODB_PMFMODB13:                      equ        This_symb_has_been_depreciated
-mPMFMODB_PMFMODB14:                      equ        This_symb_has_been_depreciated
-PMFDTMB_PMFDTMB0:                        equ        This_symb_has_been_depreciated
-PMFDTMB_PMFDTMB1:                        equ        This_symb_has_been_depreciated
-PMFDTMB_PMFDTMB2:                        equ        This_symb_has_been_depreciated
-PMFDTMB_PMFDTMB3:                        equ        This_symb_has_been_depreciated
-PMFDTMB_PMFDTMB4:                        equ        This_symb_has_been_depreciated
-PMFDTMB_PMFDTMB5:                        equ        This_symb_has_been_depreciated
-PMFDTMB_PMFDTMB6:                        equ        This_symb_has_been_depreciated
-PMFDTMB_PMFDTMB7:                        equ        This_symb_has_been_depreciated
-PMFDTMB_PMFDTMB8:                        equ        This_symb_has_been_depreciated
-PMFDTMB_PMFDTMB9:                        equ        This_symb_has_been_depreciated
-PMFDTMB_PMFDTMB10:                       equ        This_symb_has_been_depreciated
-PMFDTMB_PMFDTMB11:                       equ        This_symb_has_been_depreciated
-mPMFDTMB_PMFDTMB0:                       equ        This_symb_has_been_depreciated
-mPMFDTMB_PMFDTMB1:                       equ        This_symb_has_been_depreciated
-mPMFDTMB_PMFDTMB2:                       equ        This_symb_has_been_depreciated
-mPMFDTMB_PMFDTMB3:                       equ        This_symb_has_been_depreciated
-mPMFDTMB_PMFDTMB4:                       equ        This_symb_has_been_depreciated
-mPMFDTMB_PMFDTMB5:                       equ        This_symb_has_been_depreciated
-mPMFDTMB_PMFDTMB6:                       equ        This_symb_has_been_depreciated
-mPMFDTMB_PMFDTMB7:                       equ        This_symb_has_been_depreciated
-mPMFDTMB_PMFDTMB8:                       equ        This_symb_has_been_depreciated
-mPMFDTMB_PMFDTMB9:                       equ        This_symb_has_been_depreciated
-mPMFDTMB_PMFDTMB10:                      equ        This_symb_has_been_depreciated
-mPMFDTMB_PMFDTMB11:                      equ        This_symb_has_been_depreciated
-PMFCNTC_PMFCNTC0:                        equ        This_symb_has_been_depreciated
-PMFCNTC_PMFCNTC1:                        equ        This_symb_has_been_depreciated
-PMFCNTC_PMFCNTC2:                        equ        This_symb_has_been_depreciated
-PMFCNTC_PMFCNTC3:                        equ        This_symb_has_been_depreciated
-PMFCNTC_PMFCNTC4:                        equ        This_symb_has_been_depreciated
-PMFCNTC_PMFCNTC5:                        equ        This_symb_has_been_depreciated
-PMFCNTC_PMFCNTC6:                        equ        This_symb_has_been_depreciated
-PMFCNTC_PMFCNTC7:                        equ        This_symb_has_been_depreciated
-PMFCNTC_PMFCNTC8:                        equ        This_symb_has_been_depreciated
-PMFCNTC_PMFCNTC9:                        equ        This_symb_has_been_depreciated
-PMFCNTC_PMFCNTC10:                       equ        This_symb_has_been_depreciated
-PMFCNTC_PMFCNTC11:                       equ        This_symb_has_been_depreciated
-PMFCNTC_PMFCNTC12:                       equ        This_symb_has_been_depreciated
-PMFCNTC_PMFCNTC13:                       equ        This_symb_has_been_depreciated
-PMFCNTC_PMFCNTC14:                       equ        This_symb_has_been_depreciated
-mPMFCNTC_PMFCNTC0:                       equ        This_symb_has_been_depreciated
-mPMFCNTC_PMFCNTC1:                       equ        This_symb_has_been_depreciated
-mPMFCNTC_PMFCNTC2:                       equ        This_symb_has_been_depreciated
-mPMFCNTC_PMFCNTC3:                       equ        This_symb_has_been_depreciated
-mPMFCNTC_PMFCNTC4:                       equ        This_symb_has_been_depreciated
-mPMFCNTC_PMFCNTC5:                       equ        This_symb_has_been_depreciated
-mPMFCNTC_PMFCNTC6:                       equ        This_symb_has_been_depreciated
-mPMFCNTC_PMFCNTC7:                       equ        This_symb_has_been_depreciated
-mPMFCNTC_PMFCNTC8:                       equ        This_symb_has_been_depreciated
-mPMFCNTC_PMFCNTC9:                       equ        This_symb_has_been_depreciated
-mPMFCNTC_PMFCNTC10:                      equ        This_symb_has_been_depreciated
-mPMFCNTC_PMFCNTC11:                      equ        This_symb_has_been_depreciated
-mPMFCNTC_PMFCNTC12:                      equ        This_symb_has_been_depreciated
-mPMFCNTC_PMFCNTC13:                      equ        This_symb_has_been_depreciated
-mPMFCNTC_PMFCNTC14:                      equ        This_symb_has_been_depreciated
-PMFMODC_PMFMODC0:                        equ        This_symb_has_been_depreciated
-PMFMODC_PMFMODC1:                        equ        This_symb_has_been_depreciated
-PMFMODC_PMFMODC2:                        equ        This_symb_has_been_depreciated
-PMFMODC_PMFMODC3:                        equ        This_symb_has_been_depreciated
-PMFMODC_PMFMODC4:                        equ        This_symb_has_been_depreciated
-PMFMODC_PMFMODC5:                        equ        This_symb_has_been_depreciated
-PMFMODC_PMFMODC6:                        equ        This_symb_has_been_depreciated
-PMFMODC_PMFMODC7:                        equ        This_symb_has_been_depreciated
-PMFMODC_PMFMODC8:                        equ        This_symb_has_been_depreciated
-PMFMODC_PMFMODC9:                        equ        This_symb_has_been_depreciated
-PMFMODC_PMFMODC10:                       equ        This_symb_has_been_depreciated
-PMFMODC_PMFMODC11:                       equ        This_symb_has_been_depreciated
-PMFMODC_PMFMODC12:                       equ        This_symb_has_been_depreciated
-PMFMODC_PMFMODC13:                       equ        This_symb_has_been_depreciated
-PMFMODC_PMFMODC14:                       equ        This_symb_has_been_depreciated
-mPMFMODC_PMFMODC0:                       equ        This_symb_has_been_depreciated
-mPMFMODC_PMFMODC1:                       equ        This_symb_has_been_depreciated
-mPMFMODC_PMFMODC2:                       equ        This_symb_has_been_depreciated
-mPMFMODC_PMFMODC3:                       equ        This_symb_has_been_depreciated
-mPMFMODC_PMFMODC4:                       equ        This_symb_has_been_depreciated
-mPMFMODC_PMFMODC5:                       equ        This_symb_has_been_depreciated
-mPMFMODC_PMFMODC6:                       equ        This_symb_has_been_depreciated
-mPMFMODC_PMFMODC7:                       equ        This_symb_has_been_depreciated
-mPMFMODC_PMFMODC8:                       equ        This_symb_has_been_depreciated
-mPMFMODC_PMFMODC9:                       equ        This_symb_has_been_depreciated
-mPMFMODC_PMFMODC10:                      equ        This_symb_has_been_depreciated
-mPMFMODC_PMFMODC11:                      equ        This_symb_has_been_depreciated
-mPMFMODC_PMFMODC12:                      equ        This_symb_has_been_depreciated
-mPMFMODC_PMFMODC13:                      equ        This_symb_has_been_depreciated
-mPMFMODC_PMFMODC14:                      equ        This_symb_has_been_depreciated
-PMFDTMC_PMFDTMC0:                        equ        This_symb_has_been_depreciated
-PMFDTMC_PMFDTMC1:                        equ        This_symb_has_been_depreciated
-PMFDTMC_PMFDTMC2:                        equ        This_symb_has_been_depreciated
-PMFDTMC_PMFDTMC3:                        equ        This_symb_has_been_depreciated
-PMFDTMC_PMFDTMC4:                        equ        This_symb_has_been_depreciated
-PMFDTMC_PMFDTMC5:                        equ        This_symb_has_been_depreciated
-PMFDTMC_PMFDTMC6:                        equ        This_symb_has_been_depreciated
-PMFDTMC_PMFDTMC7:                        equ        This_symb_has_been_depreciated
-PMFDTMC_PMFDTMC8:                        equ        This_symb_has_been_depreciated
-PMFDTMC_PMFDTMC9:                        equ        This_symb_has_been_depreciated
-PMFDTMC_PMFDTMC10:                       equ        This_symb_has_been_depreciated
-PMFDTMC_PMFDTMC11:                       equ        This_symb_has_been_depreciated
-mPMFDTMC_PMFDTMC0:                       equ        This_symb_has_been_depreciated
-mPMFDTMC_PMFDTMC1:                       equ        This_symb_has_been_depreciated
-mPMFDTMC_PMFDTMC2:                       equ        This_symb_has_been_depreciated
-mPMFDTMC_PMFDTMC3:                       equ        This_symb_has_been_depreciated
-mPMFDTMC_PMFDTMC4:                       equ        This_symb_has_been_depreciated
-mPMFDTMC_PMFDTMC5:                       equ        This_symb_has_been_depreciated
-mPMFDTMC_PMFDTMC6:                       equ        This_symb_has_been_depreciated
-mPMFDTMC_PMFDTMC7:                       equ        This_symb_has_been_depreciated
-mPMFDTMC_PMFDTMC8:                       equ        This_symb_has_been_depreciated
-mPMFDTMC_PMFDTMC9:                       equ        This_symb_has_been_depreciated
-mPMFDTMC_PMFDTMC10:                      equ        This_symb_has_been_depreciated
-mPMFDTMC_PMFDTMC11:                      equ        This_symb_has_been_depreciated
-        ENDIF
-
 ; EOF
 
 		
 
 
 ; export symbols
-            XDEF Entry, _Startup, main, 
-            XREF __SEG_END_SSTACK, read_pot,  RTI_ISR, sum, hexval, JUMPASS   
+            XDEF Entry, _Startup
+            ; we use export 'Entry' as symbol. This allows us to
+            ; reference 'Entry' either in the linker .prm file
+            ; or from C/C++ later on
+
+            XREF __SEG_END_SSTACK      ; symbol defined by the linker for the end of the stack
             
-            
-            
-            
+            ; LCD References
+	         
 
-MY_EXTENDED_RAM: SECTION
-password  dc.b  $EB, $77, $7B, $7D
-
-
-myvars:   section
-passtemp  ds.b  4
+            ; Potentiometer References
+          
 
 
+
+; variable/data section
+my_variable: SECTION
+disp:	ds.b 33
+
+
+
+; code section
 MyCode:     SECTION
-main:
-_Startup:
 Entry:
-            LDS  #__SEG_END_SSTACK     ; initialize the stack pointer
-            CLI                     ; enable interrupts
-            
+_Startup:
 
-;START
-;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Start:      ldx  #0
-
-GetPass:    ;set password for start
-            ;call LCD to display "enter password"
-            jsr  JUMPASS     ;call keypad for password
-            ldaa hexval     ;load keypad value  to a
-            staa passtemp, x   ;store keypad val to passtemp
-            inx              ;
-            cpx  #4
-            bne  GetPass
-            
-            ldx #0
-;compare password with entry          
-CompASS:    cpx  #4
-            beq  GoodPass
-            ldaa passtemp, x  ;this or do y+
-            ldab password, x  ;and x
-            inx
-            cba
-            beq CompASS
-            bra BadPass
-            
-GoodPass:   ;WIP//jsr HappySound                  ;speaker for correct
-            bra Push2strt
-                      
-BadPass:    ;WIP//jsr SadSound                  ;speaker for incorrect 
-            ;WIP//call LCD to display "wrong password"
-            lbra Start          
-                      ;return to start 
-Push2strt:            ;WIP//call LCD to display "press button to start"
-                      ;//WIP push to start
-                     
-;POT
-;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-pot:
-    jsr read_pot  ;jsr read pot value
-                
-                ;sort alg:     
-                          ;is potval < or >= 31
-                             ;<
-                                  ;bne 0, 15mph 
-                                    ;(potval=0) ton = 0 toff = 15
-                                    ;bra pot
-                                  
-                                  ;15mph: ton = 4 toff = 11  
-                                    ;bra pot
-                                  
-                             ;>=
-                                  ;is potval < or >= 61
-                                  
-                                    ;<
-                                        ;ton = 8 toff = 7
-                                        ;bra pot
-                                
-                                    ;>=
-                                        ;potval > 90
-                                          ;ton = 15 toff = 0
-                                          ;bra pot
-                                          
-                                        ;else (potval <= 90)
-                                          ;ton = 12 toff = 3
-                                          ;bra pot
-                                        
-                                    
-                      
-;DC MOTOR
-;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-      ;set interrupt freq to 1 second
-      ;collects mileage  
+;*********************string initializations*********************
+           ;intializing string "disp" to be:
+           ;"The value of the pot is:      ",0
+           movb #'T',disp
+           movb #'h',disp+1
+           movb #'e',disp+2
+           movb #' ',disp+3
+           movb #'v',disp+4
+           movb #'a',disp+5
+           movb #'l',disp+6
+           movb #'u',disp+7
+           movb #'e',disp+8
+           movb #' ',disp+9
+           movb #'o',disp+10
+           movb #'f',disp+11
+           movb #' ',disp+12
+           movb #'t',disp+13
+           movb #'h',disp+14
+           movb #'e',disp+15
+           movb #' ',disp+16
+           movb #'p',disp+17
+           movb #'o',disp+18
+           movb #'t',disp+19
+           movb #' ',disp+20
+           movb #'i',disp+21
+           movb #'s',disp+22
+           movb #':',disp+23
+           movb #' ',disp+24
+           movb #' ',disp+25
+           movb #' ',disp+26
+           movb #' ',disp+27
+           movb #' ',disp+28
+           movb #' ',disp+29
+           movb #' ',disp+30
+           movb #' ',disp+31
+           movb #0,disp+32    ;string terminator, acts like '\0'    
+;*********************string initialization*********************
 
 
 
 
 
-;IRQ
-;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                      
-   ;jsr keypadcrash   
-      
-      
-      
-;KEYPAD
-;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- ;password ds.b 4    01, 02, 03, 04
- ;keypad input into a load first byte of password into b
- ;cba (compare b to a)
- ;continue for rest 
+;**************************************************************
+;
+;                   Write You Code Here
+;
+;**************************************************************
 
-
- ;keypadcrash:      
-                    ;enter crash password
-                    
-
-
-;SWITCHES
-;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~    
-
-
-
-
-;TURNING
-;__________________________________________________________________________________
-
-;STEPPER MOTOR
-;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-;LED
-;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     ;turn signal
-
-;____________________________________________________________________________________
-
-
-
-;LCD
-;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-
-
-
-
-
-
-
-
-
-
-;PUSH BUTTON
-;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-
-
-
-
-;SPEAKER
-;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-                      
-                      

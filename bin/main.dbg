@@ -7544,7 +7544,7 @@ chkloop:    cpx   #4
 GoodPass:   ;WIP//jsr HappySound                  ;speaker for correct
             brclr OilFlag, #1, Push2strt             ;bra to push2start if oilflag is clear (didnt change oil)
             clr   OilFlag
-            lbra   Start
+            lbra  GetPass
                       
 BadPass:    ;WIP//jsr SadSound                  ;speaker for incorrect 
             ldx   #wrongpass_str            ;call LCD to display "wrong password"
@@ -7563,8 +7563,8 @@ Push2strt:  ldx   #buttpass_str      ;call LCD to display "press button to start
 ;RUN CAR
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             ldx   #0      ;Set x to 0 for step motor
-            
-  StartCar: cli
+            cli
+  StartCar: 
             brset IRQFlag,#1, crash 
             jsr   GetSpd
             jsr   TurnChk       
@@ -7578,13 +7578,16 @@ Push2strt:  ldx   #buttpass_str      ;call LCD to display "press button to start
             
 
 chngoill:   bclr  port_t, #$8
-            ;ldd   #0
-            ;std   OdoNum
+            ldd   #0
+            std   OdoNum
             ldx   #chngoil_str
+            clr   DCFlag
+            movb  #$F0, port_s
             jsr   LCD
             lbra  GetOilPass
 
 crash:      bclr  port_t, #$8    ;stop dcmotor
+            clr   DCFlag
                            ;stop stepper
             ldx   #crash_str
             jsr   LCD

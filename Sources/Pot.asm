@@ -26,7 +26,10 @@ my_variable: SECTION
 ; code section
 MyCode:     SECTION
 
-GetSpd:       jsr read_pot
+GetSpd:       pshd
+              pshx
+              pshy
+              jsr read_pot
              
 sortpot:      ldd  pot_value         ;is pot_value 0   
               cpd  #0
@@ -85,7 +88,9 @@ Pot0:
               clr   FastFlag
               bra   PotFound     ;bra potFound 
                                                        
-PotFound:
+PotFound:     puly
+              pulx
+              puld
               
               movb  #1,  DCFlag
               rts

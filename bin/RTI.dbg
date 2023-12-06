@@ -2,7 +2,7 @@
                
  XDEF RTI_ISR,  
  XREF ton, toff, Turncnt,LEDcnt , DCFlag, RTI_CTL,  port_t_ddr, IRQFlag, LeftT, RightT, index
- XREF indexr, indexcnt,   SlowFlag, FastFlag, port_p, port_s, LEDFlag
+ XREF indexr, indexcnt, SlowTFlag, FastTFlag,   SlowFlag, FastFlag, port_p, port_s, LEDFlag
  XREF TurnFlag, port_t,  speakflag, LLEDtmp, RLEDtmp, ODOFlag, mocount, OilFlag,  TurnDurFlag, rtiCount, secCount, sec5Count
 ; RLED, LLED,  CrsLED,
 Const:    section
@@ -30,7 +30,10 @@ RTI_ISR:
    
 ;NOTICE: Potentially need to move flag checks here.to branch to them.
           
-          ;brset IRQFlag, #1, endrti
+          ;brset IRQFlag, #1, midendrti
+          ldaa   IRQFlag
+          cmpa   #1
+          lbeq endrti  
           ldaa Turncnt
           adda #1
 		      staa Turncnt
@@ -53,7 +56,7 @@ checksec: ldd rtiCount
 		      addd #1
           std rtiCount
           cpd #977
-          lblt endrti
+          ble chkdc
           inc secCount
           ldd #0
           std rtiCount
@@ -103,6 +106,7 @@ DCmotor:    brset OilFlag, #1, midendrti
 RTon:	      
 	          inc  mocount
 	          ldaa mocount
+	         ; staa port_s
 	          
 	          cmpa #15         ;if counter > 15 exit
 	          bge  reset        ;~~~~~~~~~~~~~~~~
@@ -118,9 +122,11 @@ RTon:
 	          
 RToff:      bclr port_t, #$8
             ;movb #0, DCFlag
-            lbra  endrti
+            lbra Stepper
                       
 reset:      movb #0, mocount
+            ldaa  mocount
+            staa  port_s
             bra  Stepper
 
 midendrti:  bset CRGFLG, #$80
@@ -136,12 +142,14 @@ midendrti:  bset CRGFLG, #$80
             brclr TurnDurFlag, #1, midendrti       
             brset RightT, #1, CW         ;if flag for right turn is set move to CW
             brset LeftT,  #1, CCW        ;if flag for left turn is set move to CCW
+       ; test: movb #$FF, port_s
+         ;   bra test
 			
 ;CW PORTION OF CODE  
          
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~            
-CW:	brset SlowFlag, #1, CWstart
-		brset FastFlag, #1, CWstart
+CW:	brset SlowTFlag, #1, CWstart
+		brset FastTFlag, #1, CWstart
 		brset speakflag, #1, speaker	
 		lbra  endrti
 		
@@ -152,6 +160,8 @@ CWstart:			;indexcnt 0-3
          ldaa index, x
          inx
          staa port_p
+         ldaa #$0F
+         staa port_s
          stx indexcnt
          clr TurnFlag
          bra RLED
@@ -160,8 +170,8 @@ resetindxCW:	ldx #0
 			        stx indexcnt
 			        bra CW
 	    	 
-CCW:	brset SlowFlag, #1, CCWstart
-	  	brset FastFlag, #1, CCWstart
+CCW:	brset SlowTFlag, #1, CCWstart
+	  	brset FastTFlag, #1, CCWstart
 	  	brset speakflag, #1, speaklf
 	  	lbra   endrti		
 
@@ -172,6 +182,8 @@ CCWstart:		;indexcnt 0-3
   ldaa indexr, x
   inx
   staa port_p
+  ldaa #$F0
+  staa port_s
   stx indexcnt
   clr  TurnFlag
   bra  LLED

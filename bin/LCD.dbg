@@ -97,7 +97,7 @@ wuns: std 	wun
 		
 	    ldd #disp
 	    jsr display_string
-	  ;	movb  #0, DCFlag
+	  	;movb  #0, DCFlag
 	  	puly
 	    rts
 

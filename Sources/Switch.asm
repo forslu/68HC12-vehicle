@@ -36,6 +36,7 @@ SlowTurn:      brclr SlowFlag, #1,return   ;fall into slowturn, branch if slowfl
 
 Fastturn:     brclr FastFlag, #1, return    ;branched to fasturn,leave if fastflag is cleared
 	            movb  #1, FastTFlag           ;if set, set the fastturnflag
+              
               ; jsr   Stepper
                clr   SlowTFlag             
               ; clr   TurnFlag         

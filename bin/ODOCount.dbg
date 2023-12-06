@@ -18,7 +18,7 @@ ODOCount:          brset OilFlag, #1, ChangeOilNow
                    ble  return        ;if less than bra return
                                       ;if greater
                    movb #1, OilFlag     ;set OilFlag
-                  ; clr  ODOFlag         
+                   clr  ODOFlag         
                    bra ChangeOilNow
              
                  

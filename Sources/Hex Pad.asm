@@ -117,7 +117,7 @@ endloop:    tfr x,d         ;transfer value of index y to d
 delay1:   
         pshx
       
-        ldx #8000  ;2 c
+        ldx #1000  ;2 c
 loopd:
         dex      ;1 c
         cpx #0    

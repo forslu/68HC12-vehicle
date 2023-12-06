@@ -27,8 +27,8 @@ Entry point: 0xC000 (_Startup)
 SECTION-ALLOCATION SECTION
 Section Name                    Size  Type     From       To       Segment
 ---------------------------------------------------------------------------------------------
-.init                            127     R     0xC000     0xC07E   ROM_C000
-.text                            267     R     0xC07F     0xC189   ROM_C000
+.init                            125     R     0xC000     0xC07C   ROM_C000
+.text                            267     R     0xC07D     0xC187   ROM_C000
 .stack                           256   R/W      0x400      0x4FF   RAM
 .abs_section_8                     1   N/I        0x8        0x8   .absSeg0
 .abs_section_9                     1   N/I        0x9        0x9   .absSeg1
@@ -304,14 +304,14 @@ Section Name                    Size  Type     From       To       Segment
 .abs_section_27c                   2   N/I      0x27C      0x27D   .absSeg271
 .abs_section_27e                   2   N/I      0x27E      0x27F   .absSeg272
 .bss                               2   R/W      0x500      0x501   RAM
-my_constant                      317     R     0xC18A     0xC2C6   ROM_C000
-MyCode                            85     R     0xC2C7     0xC31B   ROM_C000
+my_constant                      317     R     0xC188     0xC2C4   ROM_C000
+MyCode                            85     R     0xC2C5     0xC319   ROM_C000
 my_variable                      115   R/W      0x502      0x574   RAM
 .common                            2   R/W      0x575      0x576   RAM
 .vectSeg273_vect                   2     R     0xFFFE     0xFFFF   .vectSeg273
 
 Summary of section sizes per section type:
-READ_ONLY (R):         31E (dec:      798)
+READ_ONLY (R):         31C (dec:      796)
 READ_WRITE (R/W):      177 (dec:      375)
 NO_INIT (N/I):         160 (dec:      352)
 
@@ -330,15 +330,15 @@ MODULE:                 -- main.asm.o --
      Entry                                     C000       3       3       0   .init       
      _Startup                                  C000       0       0       0   .init       
      main                                      C000       0       0       0   .init       
-     Start                                     C003       5       5       0   .init       
-     GetPass                                   C008      25      37       0   .init       
-     CompPass                                  C02D       5       5       0   .init       
-     OilCh                                     C032       E      14       0   .init       
-     ButtPass                                  C040       8       8       0   .init       
-     chkpass                                   C048      14      20       0   .init       
-     GoodPass                                  C05C       7       7       0   .init       
-     BadPass                                   C063      10      16       0   .init       
-     Push2strt                                 C073       C      12       0   .init       
+     Start                                     C003       3       3       0   .init       
+     GetPass                                   C006      25      37       0   .init       
+     CompPass                                  C02B       5       5       0   .init       
+     OilCh                                     C030       E      14       0   .init       
+     ButtPass                                  C03E       8       8       0   .init       
+     chkpass                                   C046      14      20       0   .init       
+     GoodPass                                  C05A       7       7       0   .init       
+     BadPass                                   C061      10      16       0   .init       
+     Push2strt                                 C071       C      12       0   .init       
 - VARIABLES:
      passtemp                                   502       4       4       3   my_variable 
      passkey                                    506       4       4       3   my_variable 
@@ -350,20 +350,20 @@ MODULE:                 -- main.asm.o --
      OdoNum                                     50F       2       2       0   my_variable 
      DCount                                     511       1       1       0   my_variable 
      tempstring                                 512      21      33       0   my_variable 
-     constant_string                           C18A      21      33       0   my_constant 
-     strtpass                                  C1AB       4       4       1   my_constant 
-     oilpass                                   C1AF       3       3       1   my_constant 
+     constant_string                           C188      21      33       0   my_constant 
+     strtpass                                  C1A9       4       4       1   my_constant 
+     oilpass                                   C1AD       3       3       1   my_constant 
 - LABELS:
      __SEG_END_SSTACK                           500       0       0       1               
      CRGFLG                                      37       0       0       0   .text       
 MODULE:                 -- lcddisp.c.o --
 - PROCEDURES:
-     delay_ms                                  C07F      17      23       5   .text       
-     init_LCD                                  C096      52      82       1   .text       
-     display_string                            C0E8      38      56       2   .text       
-     Delay                                     C120      1F      31       1   .text       
-     epulse                                    C13F      24      36       3   .text       
-     sendCommand                               C163       F      15       7   .text       
+     delay_ms                                  C07D      17      23       5   .text       
+     init_LCD                                  C094      52      82       1   .text       
+     display_string                            C0E6      38      56       2   .text       
+     Delay                                     C11E      1F      31       1   .text       
+     epulse                                    C13D      24      36       3   .text       
+     sendCommand                               C161       F      15       7   .text       
 - VARIABLES:
      data                                       500       2       2       4   .bss        
 MODULE:                 -- mc9s12e128.c.o --
@@ -644,32 +644,32 @@ MODULE:                 -- mc9s12e128.c.o --
      _PIFAD                                     27E       2       2       0   .abs_section_27e
 MODULE:                 -- potentiometer.c.o --
 - PROCEDURES:
-     read_pot                                  C172      18      24       1   .text       
+     read_pot                                  C170      18      24       1   .text       
 - VARIABLES:
      pot_value                                  575       2       2       2   .common     
 MODULE:                 -- LCD.asm.o --
 - PROCEDURES:
-     LCD                                       C2C7       F      15       3   MyCode      
-     string_copy                               C2D6       3       3       1   MyCode      
-     cpy_loop                                  C2D9       9       9       0   MyCode      
-     start                                     C2E2      3A      58       0   MyCode      
+     LCD                                       C2C5       F      15       3   MyCode      
+     string_copy                               C2D4       3       3       1   MyCode      
+     cpy_loop                                  C2D7       9       9       0   MyCode      
+     start                                     C2E0      3A      58       0   MyCode      
 - VARIABLES:
      disp                                       533      21      33       5   my_variable 
      temp_str                                   554      21      33       4   my_variable 
-     enterpass_str                             C1B2      21      33       1   my_constant 
-     wrongpass_str                             C1D3      21      33       1   my_constant 
-     buttpass_str                              C1F4      20      32       1   my_constant 
-     speed_str                                 C214      21      33       0   my_constant 
-     Left_str                                  C235      21      33       0   my_constant 
-     Right_str                                 C256      25      37       0   my_constant 
-     crash_str                                 C27B      27      39       0   my_constant 
-     chngoil_str                               C2A2      25      37       0   my_constant 
+     enterpass_str                             C1B0      21      33       1   my_constant 
+     wrongpass_str                             C1D1      21      33       1   my_constant 
+     buttpass_str                              C1F2      20      32       1   my_constant 
+     speed_str                                 C212      21      33       0   my_constant 
+     Left_str                                  C233      21      33       0   my_constant 
+     Right_str                                 C254      25      37       0   my_constant 
+     crash_str                                 C279      27      39       0   my_constant 
+     chngoil_str                               C2A0      25      37       0   my_constant 
 
 *********************************************************************************************
 MODULE STATISTIC
   Name                                      Data   Code  Const
 ---------------------------------------------------------------------------------------------
-  main.asm.o                                  49    127     40
+  main.asm.o                                  49    125     40
   lcddisp.c.o                                  2    243      0
   mc9s12e128.c.o                             352      0      0
   potentiometer.c.o                            2     24      0
@@ -1538,37 +1538,37 @@ OBJECT LIST SORTED BY ADDRESS
      main                                      C000       0       0       0   .init       
      _Startup                                  C000       0       0       0   .init       
      Entry                                     C000       3       3       0   .init       
-     Start                                     C003       5       5       0   .init       
-     GetPass                                   C008      25      37       0   .init       
-     CompPass                                  C02D       5       5       0   .init       
-     OilCh                                     C032       E      14       0   .init       
-     ButtPass                                  C040       8       8       0   .init       
-     chkpass                                   C048      14      20       0   .init       
-     GoodPass                                  C05C       7       7       0   .init       
-     BadPass                                   C063      10      16       0   .init       
-     Push2strt                                 C073       C      12       0   .init       
-     delay_ms                                  C07F      17      23       5   .text       
-     init_LCD                                  C096      52      82       1   .text       
-     display_string                            C0E8      38      56       2   .text       
-     Delay                                     C120      1F      31       1   .text       
-     epulse                                    C13F      24      36       3   .text       
-     sendCommand                               C163       F      15       7   .text       
-     read_pot                                  C172      18      24       1   .text       
-     constant_string                           C18A      21      33       0   my_constant 
-     strtpass                                  C1AB       4       4       1   my_constant 
-     oilpass                                   C1AF       3       3       1   my_constant 
-     enterpass_str                             C1B2      21      33       1   my_constant 
-     wrongpass_str                             C1D3      21      33       1   my_constant 
-     buttpass_str                              C1F4      20      32       1   my_constant 
-     speed_str                                 C214      21      33       0   my_constant 
-     Left_str                                  C235      21      33       0   my_constant 
-     Right_str                                 C256      25      37       0   my_constant 
-     crash_str                                 C27B      27      39       0   my_constant 
-     chngoil_str                               C2A2      25      37       0   my_constant 
-     LCD                                       C2C7       F      15       3   MyCode      
-     string_copy                               C2D6       3       3       1   MyCode      
-     cpy_loop                                  C2D9       9       9       0   MyCode      
-     start                                     C2E2      3A      58       0   MyCode      
+     Start                                     C003       3       3       0   .init       
+     GetPass                                   C006      25      37       0   .init       
+     CompPass                                  C02B       5       5       0   .init       
+     OilCh                                     C030       E      14       0   .init       
+     ButtPass                                  C03E       8       8       0   .init       
+     chkpass                                   C046      14      20       0   .init       
+     GoodPass                                  C05A       7       7       0   .init       
+     BadPass                                   C061      10      16       0   .init       
+     Push2strt                                 C071       C      12       0   .init       
+     delay_ms                                  C07D      17      23       5   .text       
+     init_LCD                                  C094      52      82       1   .text       
+     display_string                            C0E6      38      56       2   .text       
+     Delay                                     C11E      1F      31       1   .text       
+     epulse                                    C13D      24      36       3   .text       
+     sendCommand                               C161       F      15       7   .text       
+     read_pot                                  C170      18      24       1   .text       
+     constant_string                           C188      21      33       0   my_constant 
+     strtpass                                  C1A9       4       4       1   my_constant 
+     oilpass                                   C1AD       3       3       1   my_constant 
+     enterpass_str                             C1B0      21      33       1   my_constant 
+     wrongpass_str                             C1D1      21      33       1   my_constant 
+     buttpass_str                              C1F2      20      32       1   my_constant 
+     speed_str                                 C212      21      33       0   my_constant 
+     Left_str                                  C233      21      33       0   my_constant 
+     Right_str                                 C254      25      37       0   my_constant 
+     crash_str                                 C279      27      39       0   my_constant 
+     chngoil_str                               C2A0      25      37       0   my_constant 
+     LCD                                       C2C5       F      15       3   MyCode      
+     string_copy                               C2D4       3       3       1   MyCode      
+     cpy_loop                                  C2D7       9       9       0   MyCode      
+     start                                     C2E0      3A      58       0   MyCode      
 
 *********************************************************************************************
 UNUSED-OBJECTS SECTION
@@ -1616,5 +1616,5 @@ STATISTIC SECTION
 ExeFile:
 --------
 Number of blocks to be downloaded: 5
-Total size of all blocks to be downloaded: 798
+Total size of all blocks to be downloaded: 796
 

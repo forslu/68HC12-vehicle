@@ -62,8 +62,7 @@ main:
            ; cli
 
 
-Start:       bra GetPass
-            ldx  #0
+Start:      ldx  #0
             
             ;brset OilFlag, #1, GetOilPass
             

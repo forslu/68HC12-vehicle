@@ -2,7 +2,7 @@
  XDEF Left_str, Right_str, crash_str, chngoil_str, disp, ten, wun      
 
       
- XREF __SEG_END_SSTACK, init_LCD, display_string, pot_value, read_pot, mph, DCFlag
+ XREF __SEG_END_SSTACK, init_LCD, display_string, pot_value, read_pot, mph, DCFlag, LCDFlag
 
 my_variable: SECTION
 disp:	    ds.b 33
@@ -13,14 +13,14 @@ wun:      ds.w 1
 ;constant section
 my_constant: SECTION
 ;LCD Strings
-enterpass_str   dc.b  'Enter Password                 ',0
-wrongpass_str   dc.b  'Incorrect Password             ',0
-buttpass_str    dc.b  'Push button to start          ',0
-speed_str       dc.b  'Speed is:    mph  ',0
-Left_str        dc.b  'Left Turn                      ',0
-Right_str       dc.b  'Right Turn                         ',0
-crash_str       dc.b  'Oopsie we crash, enter pass          ',0
-chngoil_str     dc.b  'Oopsie no oil, enter pass          ',0
+enterpass_str   dc.b  'Enter Password                   ',0
+wrongpass_str   dc.b  'Incorrect Password               ',0
+buttpass_str    dc.b  'Push button to start             ',0
+speed_str       dc.b  'Speed is:    mph                 ',0
+Left_str        dc.b  'Left Turn                        ',0
+Right_str       dc.b  'Right Turn                       ',0
+crash_str       dc.b  'Oopsie we crash, enter pass      ',0
+chngoil_str     dc.b  'Oopsie no oil, enter pass        ',0
                 
 
 
@@ -28,15 +28,21 @@ chngoil_str     dc.b  'Oopsie no oil, enter pass          ',0
 ; code section
 MyCode:     SECTION
 
+
 LCD:
-  	ldy #disp
-	  jsr string_copy				;passes arguments to string copy subroutine
+            pshx
+            brset LCDFlag, #1 ,lcdcont
+            movb #1, LCDFlag
+            jsr init_LCD
+ lcdcont: 	pulx
+            ldy #disp
+	          jsr string_copy				;passes arguments to string copy subroutine
     
-    ldd #disp
-    brset DCFlag, #1, Dispeed    ;get pot then speed to display with
-    jsr display_string
+            ldd #disp
+            brset DCFlag, #1, Dispeed    ;get pot then speed to display with
+            jsr display_string
     
-    rts
+            rts
 
 
 

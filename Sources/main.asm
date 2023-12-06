@@ -10,22 +10,19 @@
             INCLUDE 'derivative.inc'
 
 ; export symbols
-            XDEF Entry, _Startup, main, ton, toff, DCFlag, LCDFlag,mph, CRGFLG, tempstring
-            ; we use export 'Entry' as symbol. This allows us to
-            ; reference 'Entry' either in the linker .prm file
-            ; or from C/C++ later on
-
-            XREF init_LCD, read_pot, display_string,       ; symbol defined by the linker for the end of the stack
-            XREF __SEG_END_SSTACK, JUMPASS, hexval, Pbutton ,RTI_ISR,
-            ; Swich, TurnFlag, DCFlag, TurnDurFlag, SLCDCrash
-            XREF pot_value, speed_str, GetSpd  
-           ;  sum,  SendsChr.c
+            XDEF Entry, _Startup, main, ton, toff, DCFlag,  LCDFlag,mph, tempstring, RTI_CTL ,RTIFLG, port_t_ddr
+          
+            XREF init_LCD, read_pot, display_string,    
+            XREF __SEG_END_SSTACK, JUMPASS, hexval, Pbutton ,RTI_ISR, ODOCount
+            ; Swich, TurnFlag, TurnDurFlag, SLCDCrash  
+            XREF pot_value, speed_str, GetSpd,  SendsChr.c, secCount, sec5Count, rtiCount
+           ;  sum
             XREF potentiometer.c, LCD, enterpass_str, wrongpass_str, buttpass_str
-            XREF Left_str, Right_str, crash_str, chngoil_str, disp
-            ; LCD References
+            XREF Left_str, Right_str, crash_str, chngoil_str, disp,; port_t_ddr, port_t
+          
 	         
 
-            ; Potentiometer References
+         
           
    ;for LCD statements enter:
    ;         ldx  #*_str   ;call LCD to display               
@@ -34,6 +31,7 @@
 
 ; variable/data section
 my_variable: SECTION
+
 
 passtemp:       ds.b  4
 passkey:        ds.b  4
@@ -49,10 +47,14 @@ tempstring:     ds.b 33
 
 ;constant section
 my_constant: SECTION
+RTIFLG:     equ  $0037
+RGINT:     equ  $0038  
+RTI_CTL:    equ  $003B
 
 constant_string dc.b  'The value of the pot is:        ',0
 strtpass        dc.b   $1, $2, $3, $4
 oilpass         dc.b   $1, $2, $3
+port_t_ddr:     equ  $242
 
 
 ; code section
@@ -60,14 +62,25 @@ MyCode:     SECTION
 Entry:
 _Startup:
 main:
-            jsr init_LCD
+            ;movb #$8, port_t_ddr     ;OR bset port_t_ddr, #$8	 ;set bit 3 of port t 
+            ;bset port_t, #$8    ;set motor
           	lds #__SEG_END_SSTACK			;initializes stack pointer	
-           ; cli
-
-
-Start:      
+            movb  #0, LCDFlag
+            movb  #$C0, INTCR
+            movb #$80, RGINT
+            movb #$60, RTI_CTL
+            movb #$8, port_t_ddr     ;OR bset port_t_ddr, #$8	 ;set bit 3 of port t
+            ldd  #0
+            std  rtiCount
+            clr  secCount
+            clr  sec5Count
             
-            ;brset OilFlag, #1, GetOilPass
+            
+            
+                
+Start:        
+            
+            brset OilFlag, #1, GetOilPass
             
             ldx  #enterpass_str   ;call LCD to display               
             jsr  LCD
@@ -83,12 +96,12 @@ GetPass:
             bra  CompPass
 
 GetOilPass: ldx #0
-;Oilloop:    jsr  JUMPASS     ;call keypad for password
-;            ldaa hexval     ;load keypad value  to a
+Oilloop:    jsr  JUMPASS     ;call keypad for password
+            ldaa hexval     ;load keypad value  to a
             staa passtemp, x   ;store keypad val to passtemp
             inx              ;
             cpx  #3
-;            bne  Oilloop
+            bne  Oilloop
             bra  OilCh        ;branch to OilCh 
             
             
@@ -108,8 +121,8 @@ Oipass:     ldaa  oilpass, x   ;maybe immediate?       ;set passkey to Oilpasswo
 ButtPass:   ldaa  strtpass, x        ;set passkey to startpassword
             staa  passkey, x
             inx
-            cpx #4
-            bne ButtPass
+            cpx   #4
+            bne   ButtPass
             bra   chkpass           ;branch to check password
                  
 chkpass:    ldx   #0
@@ -124,8 +137,9 @@ chkloop:    cpx   #4
             
             
 GoodPass:   ;WIP//jsr HappySound                  ;speaker for correct
+            brclr OilFlag, #1, Push2strt             ;bra to push2start if oilflag is clear (didnt change oil)
             movb  #0, OilFlag
-            bra   Push2strt
+            bra   Start
                       
 BadPass:    ;WIP//jsr SadSound                  ;speaker for incorrect 
             ldx   #wrongpass_str            ;call LCD to display "wrong password"
@@ -143,12 +157,15 @@ Push2strt:  ldx   #buttpass_str    ;call LCD to display "press button to start"
 
 ;POT
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  StartCar:
+  StartCar: cli
             jsr GetSpd
-            ;jsr DCMotor
+          
+            
+       
+            
             
             jsr LCD
-            
+           ;WIP// jsr ODOCount
             bra StartCar
             
 

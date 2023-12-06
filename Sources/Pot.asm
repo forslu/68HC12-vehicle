@@ -67,9 +67,9 @@ HiPotChk:     cpd #91            ;is potval < or >= 91
                                           
 MaxPot:                                        
 ;potval is >= 91  
-              movb  #45, mph      ;mph = 60             
-              movb  #12, ton     ;ton = 15
-              movb  #3,  toff     ;toff =0
+              movb  #60, mph      ;mph = 60             
+              movb  #15, ton     ;ton = 15
+              movb  #0,  toff     ;toff =0
               bra   PotFound      ;bra potFound                                          
 Pot0:
 ;(potval=0) ton = 0 toff = 15 

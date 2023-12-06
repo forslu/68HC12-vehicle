@@ -10,33 +10,36 @@
             INCLUDE 'derivative.inc'
 
 ; export symbols
-            XDEF Entry, _Startup, main, ton, toff, LCDFlag, CRGFLG, tempstring
+            XDEF Entry, _Startup, main, ton, toff, DCFlag, LCDFlag,mph, CRGFLG, tempstring
             ; we use export 'Entry' as symbol. This allows us to
             ; reference 'Entry' either in the linker .prm file
             ; or from C/C++ later on
 
             XREF init_LCD, read_pot, display_string,       ; symbol defined by the linker for the end of the stack
-            XREF __SEG_END_SSTACK,
+            XREF __SEG_END_SSTACK, JUMPASS, hexval, Pbutton ,RTI_ISR,
             ; Swich, TurnFlag, DCFlag, TurnDurFlag, SLCDCrash
-            XREF pot_value, speed_str  
-           ; RTI_ISR, sum, hexval, JUMPASS, SendsChr.c
+            XREF pot_value, speed_str, GetSpd  
+           ;  sum,  SendsChr.c
             XREF potentiometer.c, LCD, enterpass_str, wrongpass_str, buttpass_str
-            XREF Left_str, Right_str, crash_str, chngoil_str, temp_str, disp
+            XREF Left_str, Right_str, crash_str, chngoil_str, disp
             ; LCD References
 	         
 
             ; Potentiometer References
           
-
+   ;for LCD statements enter:
+   ;         ldx  #*_str   ;call LCD to display               
+           ; jsr  LCD
 
 
 ; variable/data section
 my_variable: SECTION
 
-passtemp        ds.b  4
-passkey         ds.b  4
-OilFlag         ds.b  1
+passtemp:       ds.b  4
+passkey:        ds.b  4
+OilFlag:        ds.b  1
 LCDFlag:        ds.b  1
+DCFlag:         ds.b  1
 ton:            ds.b  1
 toff:           ds.b  1
 mph:            ds.b  1
@@ -48,8 +51,8 @@ tempstring:     ds.b 33
 my_constant: SECTION
 
 constant_string dc.b  'The value of the pot is:        ',0
-strtpass        dc.b  $EB, $77, $7B, $7D
-oilpass         dc.b  $7D, $7B, $77
+strtpass        dc.b   $1, $2, $3, $4
+oilpass         dc.b   $1, $2, $3
 
 
 ; code section
@@ -57,21 +60,22 @@ MyCode:     SECTION
 Entry:
 _Startup:
 main:
-
+            jsr init_LCD
           	lds #__SEG_END_SSTACK			;initializes stack pointer	
            ; cli
 
 
-Start:      ldx  #0
+Start:      
             
             ;brset OilFlag, #1, GetOilPass
             
-GetPass:    ldy  #enterpass_str   ;call LCD to display "enter password"
-            sty  temp_str
-            ldy #0   
+            ldx  #enterpass_str   ;call LCD to display               
             jsr  LCD
-            ;jsr  JUMPASS     ;call keypad for password
-            ;ldaa hexval     ;load keypad value  to a
+
+WrongPass:  ldx  #0
+GetPass:    
+            jsr  JUMPASS     ;call keypad for password
+            ldaa hexval     ;load keypad value to a
             staa passtemp, x   ;store keypad val to passtemp
             inx              ;
             cpx  #4
@@ -90,25 +94,32 @@ GetOilPass: ldx #0
             
 ;compare password with entry          
 CompPass:   ldx   #0                ;x is counter for pass digits
-            bra   ButtPass           ;else branch to ButtPass
+            bra   ButtPass           ; branch to ButtPass
             
 OilCh:      ldx   #0
-            inx               ;check one less digit (3)
-            ldaa  oilpass, x   ;maybe immediate?       ;set passkey to Oilpassword
+                           ;check one less digit (3)
+Oipass:     ldaa  oilpass, x   ;maybe immediate?       ;set passkey to Oilpassword
             staa  passkey, x
+            inx
+            cpx   #3
+            bne   Oipass
             bra   chkpass          ;branch to check password
                         
-ButtPass:   ldaa  strtpass          ;set passkey to startpassword
-            staa  passkey
+ButtPass:   ldaa  strtpass, x        ;set passkey to startpassword
+            staa  passkey, x
+            inx
+            cpx #4
+            bne ButtPass
             bra   chkpass           ;branch to check password
                  
-chkpass:    cpx   #4
+chkpass:    ldx   #0
+chkloop:    cpx   #4
             beq   GoodPass
             ldaa  passtemp, x  ;this or do y+
             ldab  passkey, x  ;and x
             inx
             cba
-            beq   CompPass
+            beq   chkloop
             bra   BadPass
             
             
@@ -117,24 +128,29 @@ GoodPass:   ;WIP//jsr HappySound                  ;speaker for correct
             bra   Push2strt
                       
 BadPass:    ;WIP//jsr SadSound                  ;speaker for incorrect 
-            ldy   #wrongpass_str            ;WIP//call LCD to display "wrong password"
-            sty   temp_str 
-            ldy   #0
+            ldx   #wrongpass_str            ;call LCD to display "wrong password"
             jsr   LCD           
-            lbra  Start          ;return to start 
+            lbra  WrongPass          ;return to start 
                       
-Push2strt:  ldy   #buttpass_str    ;WIP//call LCD to display "press button to start"
-            sty   temp_str
-            ldy   #0
-            jsr   LCD              
-                            ;//WIP button to start
+Push2strt:  ldx   #buttpass_str    ;call LCD to display "press button to start"
+            jsr   LCD 
+            jsr   Pbutton       ;button to start
 
+            
+                      
+                           
 
 
 ;POT
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
+  StartCar:
+            jsr GetSpd
+            ;jsr DCMotor
+            
+            jsr LCD
+            
+            bra StartCar
+            
 
 
 

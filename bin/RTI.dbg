@@ -1,12 +1,13 @@
  ;RTI_ISR
  
- XDEF RTI_ISR, sum, rtiCount, secCount, sec5Count, TurnFlag, DCFlag, TurnDurFlag, DCount,
- XREF __SEG_END_SSTACK, RTI_CTL, Ton, Toff,   
+ XDEF RTI_ISR, sum, rtiCount, secCount, sec5Count, TurnFlag, ODOFlag, TurnDurFlag, DCount,
+ XREF __SEG_END_SSTACK, RTI_CTL, Ton, Toff, CRGFLG  
  
 Const:    section
 RTIFLG:     equ  $37
 CRGINT:     equ  $38 
-;CRGFLG:     equ  
+;CRGFLG:     equ 
+;RTI_CTL:    equ  $40 
 port_t:     equ  $240
 port_t_ddr: equ  $242
 
@@ -19,7 +20,7 @@ sec5Count   ds.b 1
 DCount      ds.b 1 
 
 ;not sure if needed//MotorFlag   ds.b 1
-DCFlag      ds.b 1
+ODOFlag      ds.b 1
 TurnFlag    ds.b 1
 TurnDurFlag ds.b 1 
  
@@ -31,7 +32,7 @@ RTI_ISR:  bset port_t_ddr, #$8
    
 ;NOTICE: Potentially need to move flag checks here.to branch to them.
           
-          ;LDS  #__SEG_END_SSTACK
+          
           ldd rtiCount
           incb
           cpd #977
@@ -40,7 +41,7 @@ RTI_ISR:  bset port_t_ddr, #$8
       
       ;setting flags
           movb #1, TurnDurFlag          ;set second flag (execute at 1 second: turn duration(stepper), Blinker duration (LED), count miles (DCMotor) 
-          movb #1, DCFlag               ;DC motor flag
+          movb #1, ODOFlag               ;ODO flag
           ;not sure if needed//movb #1, MotorFlag            
           
           ldaa sec5Count
@@ -50,7 +51,7 @@ RTI_ISR:  bset port_t_ddr, #$8
           movb #1, TurnFlag                 ;set 5 second flag (execute turn)
           bra endrti
           
-endrti:   ;bset CRGFLG, #$80
+endrti:   bset CRGFLG, #$80
           rti
           
 

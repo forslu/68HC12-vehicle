@@ -1,25 +1,26 @@
  XDEF enterpass_str, wrongpass_str, buttpass_str, speed_str, LCD 
- XDEF Left_str, Right_str, crash_str, chngoil_str, temp_str, disp      
+ XDEF Left_str, Right_str, crash_str, chngoil_str, disp, ten, wun      
 
       
- XREF __SEG_END_SSTACK, init_LCD, display_string, pot_value, read_pot
+ XREF __SEG_END_SSTACK, init_LCD, display_string, pot_value, read_pot, mph, DCFlag
 
 my_variable: SECTION
 disp:	    ds.b 33
 temp_str: ds.b 33
-
+ten:      ds.w 1
+wun:      ds.w 1
 
 ;constant section
 my_constant: SECTION
 ;LCD Strings
-enterpass_str   dc.b  'Enter Password:                 ',0
-wrongpass_str   dc.b  'Incorrect Password:             ',0
-buttpass_str    dc.b  'Push button to start:          ',0
-speed_str       dc.b  'Speed in mph is:                ',0
-Left_str        dc.b  'Left Turn:                      ',0
-Right_str       dc.b  'Right Turn:                         ',0
-crash_str       dc.b  'Oopsie we crash, enter pass:          ',0
-chngoil_str     dc.b  'Oopsie no oil, enter pass:          ',0
+enterpass_str   dc.b  'Enter Password                 ',0
+wrongpass_str   dc.b  'Incorrect Password             ',0
+buttpass_str    dc.b  'Push button to start          ',0
+speed_str       dc.b  'Speed is:    mph  ',0
+Left_str        dc.b  'Left Turn                      ',0
+Right_str       dc.b  'Right Turn                         ',0
+crash_str       dc.b  'Oopsie we crash, enter pass          ',0
+chngoil_str     dc.b  'Oopsie no oil, enter pass          ',0
                 
 
 
@@ -28,13 +29,18 @@ chngoil_str     dc.b  'Oopsie no oil, enter pass:          ',0
 MyCode:     SECTION
 
 LCD:
-			
-	ldx #temp_str			;loads arguments into registers
-	ldy #disp 
-	jsr string_copy				;passes arguments to string copy subroutine
-	jsr init_LCD
-	jsr display_string  
+  	ldy #disp
+	  jsr string_copy				;passes arguments to string copy subroutine
+    
+    ldd #disp
+    brset DCFlag, #1, Dispeed    ;get pot then speed to display with
+    jsr display_string
+    
+    rts
 
+
+
+  
 
 ;**************************************************************
 
@@ -48,48 +54,42 @@ string_copy:   pshb
 	             pulb
                rts					;pull and return
 
-start:		ldy 	#0
-		;sty 	hund
-		jsr 	read_pot
-		ldd 	pot_value
-		cpd 	#100
-	;	blt 	tens
-  	        ldx 	#100
-		idiv
-			
-		tfr x, a
-		adda 	#$30
-	;	staa 	hund
-			
-  	
-;tens: 	        ldy 	#0
-	;	sty 	ten
-	;	cpd 	#10
-	  ;blt 	wuns
+Dispeed:
+	  ldx #speed_str
+    ldy #disp
+    jsr string_copy
+
+		
+    ldd #00
+  	ldab mph
+	        
+    ldy 	#0
+		sty 	ten
+		cmpb 	#10
+	  blt 	wuns
 		ldx  	#10
 		idiv
 
-	 ;stx 	ten
+	  stx 	ten
 		
-		
-;wuns: std 	wun
-				
-	;	ldd 	hund
-		addd 	#$30
-		stab 	disp + 24
+	;NOTE FOR THURSDAY NIGHT, NEED TO FIGURE OUT HOW TO ADD SPEED TO STRING	
+wuns: std 	wun
 		ldd 	#0
-	;	ldd 	ten
+		ldd 	ten
 		addd 	#$30
-		stab 	disp + 25
+		stab 	disp + 10
 		ldd 	#0
-	;	ldd 	wun
+		ldd 	wun
 		addd 	#$30
-		stab 	disp + 26	
+		stab 	disp + 11	
 
-		ldd 	#disp
-		jsr	display_string
+	
+	
 		
-		bra 	start
+	  ldd #disp
+	  jsr display_string
+		movb  #0, DCFlag
+	  rts
 
 
 

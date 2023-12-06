@@ -23,8 +23,8 @@
 ; variable/data section
 MY_EXTENDED_RAM: SECTION
 ; Insert here your data definition.
-port_s:       equ    $248
-port_s_ddr:   equ    $24A
+;port_s:       equ    $248
+;port_s_ddr:   equ    $24A
 port_u:       equ    $268
 port_u_ddr:   equ    $26A
 port_u_pde:   equ    $26C
@@ -40,11 +40,11 @@ hexval: ds.b   1
 ; code section
 MyCode:     SECTION
 
-JUMPASS:     lds  #__SEG_END_SSTACK
+JUMPASS:     pshx
              movb #$F0, port_u_ddr   ;set 0-3 input and 4-7 output
              movb #$F0, port_u_psr   ;set up 0-3 as pullup device
              movb #$0F, port_u_pde   ;activate pullup device on pins 0-3 
-             movb #$FF, port_s_ddr   ;set port_s as output
+             ;movb #$FF, port_s_ddr   ;set port_s as output
 
 
 ;P2. scan all four rows~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -71,7 +71,7 @@ scan:        ldaa 1, y+  ;store y into port_u post dec    prev a
              ldab port_u
              cba
              beq release
-             
+            
            
  
 
@@ -99,6 +99,7 @@ endloop:    tfr x,d         ;transfer value of index y to d
             tba
             staa hexval            ;take indexvalue in acc B and move it to A
             ;staa port_s       ;store chosen value in the lower nibble portion of LEDs
+            pulx
             rts
             
 ;END OF COORDINATE FINDER~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~           
@@ -116,7 +117,7 @@ endloop:    tfr x,d         ;transfer value of index y to d
 delay1:   
         pshx
       
-        ldx #1000  ;2 c
+        ldx #8000  ;2 c
 loopd:
         dex      ;1 c
         cpx #0    

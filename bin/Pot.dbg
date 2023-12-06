@@ -7332,6 +7332,7 @@ sortpot:      ldd  pot_value         ;is pot_value 0
               movb  #4,  ton      ;ton = 4
               movb  #11, toff     ;toff = 11
               movb  #1,  SlowFlag                     ;slowflag set
+              clr   FastFlag
               bra   PotFound       ;bra pot                 
                             
                                    
@@ -7343,6 +7344,7 @@ MidPotChk:    cpd  #61                ;is potval < or >= 61
               movb  #8,  ton      ;ton = 8
               movb  #7,  toff     ;toff = 7
               movb  #1,  FastFlag                   ;fastflag set
+              clr   SlowFlag
               bra   PotFound      ;bra pot                      
                                       
                                 

@@ -7302,7 +7302,8 @@ mPMFDTMC_PMFDTMC11:                      equ        This_symb_has_been_depreciat
 
 
 ; export symbols
-            XDEF Entry, _Startup, main, ton, toff, DCFlag,  LCDFlag,mph, tempstring, RTI_CTL ,RTIFLG, port_t_ddr
+            XDEF Entry, _Startup, main, ton, toff, DCFlag,  LCDFlag,mph
+            XDEF tempstring, RTI_CTL ,RTIFLG, port_t_ddr, OdoNum
           
             XREF init_LCD, read_pot, display_string,    
             XREF __SEG_END_SSTACK, JUMPASS, hexval, Pbutton ,RTI_ISR, ODOCount
@@ -7310,7 +7311,7 @@ mPMFDTMC_PMFDTMC11:                      equ        This_symb_has_been_depreciat
             XREF pot_value, speed_str, GetSpd,  SendsChr.c, secCount, sec5Count, rtiCount
            ;  sum
             XREF potentiometer.c, LCD, enterpass_str, wrongpass_str, buttpass_str
-            XREF Left_str, Right_str, crash_str, chngoil_str, disp,; port_t_ddr, port_t
+            XREF Left_str, Right_str, crash_str, chngoil_str, disp, clearLCD_str, string_copy
           
 	         
 
@@ -7340,13 +7341,13 @@ tempstring:     ds.b 33
 ;constant section
 my_constant: SECTION
 RTIFLG:     equ  $0037
-RGINT:     equ  $0038  
+RGINT:      equ  $0038  
 RTI_CTL:    equ  $003B
 
 constant_string dc.b  'The value of the pot is:        ',0
 strtpass        dc.b   $1, $2, $3, $4
 oilpass         dc.b   $1, $2, $3
-port_t_ddr:     equ  $242
+port_t_ddr:     equ    $242
 
 
 ; code section
@@ -7359,20 +7360,29 @@ main:
           	lds #__SEG_END_SSTACK			;initializes stack pointer	
             movb  #0, LCDFlag
             movb  #$C0, INTCR
-            movb #$80, RGINT
-            movb #$60, RTI_CTL
-            movb #$8, port_t_ddr     ;OR bset port_t_ddr, #$8	 ;set bit 3 of port t
-            ldd  #0
-            std  rtiCount
-            clr  secCount
-            clr  sec5Count
+            movb  #$80, RGINT
+            movb  #$60, RTI_CTL
+            movb  #$8, port_t_ddr     ;OR bset port_t_ddr, #$8	 ;set bit 3 of port t
+            ldd   #0
+            std   OdoNum
+            std   rtiCount
+            clr   OilFlag
+            clr   secCount
+            clr   sec5Count
             
+    ;clear LCD        
+            ldx   #clearLCD_str
+            ldy   #disp
+            jsr   init_LCD
+            jsr   string_copy
+            ldd   #disp
+            jsr   display_string
             
             
                 
 Start:        
             
-            brset OilFlag, #1, GetOilPass
+           ; brset OilFlag, #1, GetOilPass
             
             ldx  #enterpass_str   ;call LCD to display               
             jsr  LCD
@@ -7457,7 +7467,14 @@ Push2strt:  ldx   #buttpass_str    ;call LCD to display "press button to start"
             
             
             jsr LCD
-           ;WIP// jsr ODOCount
+            jsr ODOCount
+            
+     ;check oil flag      
+            ldaa OilFlag
+            cmpa #1
+            lbeq GetOilPass 
+            ;brset OilFlag, #1, GetOilPass
+            
             bra StartCar
             
 

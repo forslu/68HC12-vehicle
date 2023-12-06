@@ -45,7 +45,7 @@ RTI_ISR:
           
           movb #1, TurnDurFlag   ;set second flag (execute at 1 second: turn duration(stepper)  
           movb #1, ODOFlag               ;ODO flag count miles
-                                 ;Blinker duration (LED)
+          ;movb #1, OilFlag                      ;Blinker duration (LED)
           
           ldaa secCount
           cmpa #5
